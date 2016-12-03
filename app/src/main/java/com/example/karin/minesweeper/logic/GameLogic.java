@@ -11,7 +11,7 @@ public class GameLogic
     private int rows;
     private int cols;
     private int mines;
-
+    private int counter;
     private int[][] gameBoard;
 
     public GameLogic(int rows, int cols,int mines)
@@ -19,6 +19,7 @@ public class GameLogic
         this.rows = rows;
         this.cols = cols;
         this.mines = mines;
+        this.counter = rows*cols-mines;
         this.gameBoard = new int[rows][cols];
         this.buildBoard();
     }
@@ -50,9 +51,10 @@ public class GameLogic
             return false;
     }
 
-    public void updateCell()
+    public int updateCell(int x, int y)
     {
-
+        this.counter--;
+        return gameBoard[x][y];
     }
 
     public int CalculateNeighbours(int row, int col)
@@ -61,43 +63,46 @@ public class GameLogic
 
         if(row-1 >= 0) //not the first row
         {
-            if (gameBoard[col][row - 1] == -1)
+            if (gameBoard[row - 1][col] == -1)
                 countNeigh++;
             if (col - 1 >= 0)
-                if (gameBoard[col - 1][row - 1] == -1)
+                if (gameBoard[row - 1][col - 1] == -1)
                     countNeigh++;
             if (col+1 <cols)
-                if(gameBoard[col+1][row-1] == -1)
+                if(gameBoard[row-1][col+1] == -1)
                     countNeigh++;
         }
 
         if(row+1 <rows) // not the last row
         {
-            if(gameBoard[col][row+1] == -1)
+            if(gameBoard[row+1][col] == -1)
                 countNeigh++;
             if(col-1 >= 0)
-                if(gameBoard[col-1][row+1] == -1)
+                if(gameBoard[row+1][col-1] == -1)
                     countNeigh++;
             if(col+1 < cols)
-                if(gameBoard[col+1][row+1] == -1)
+                if(gameBoard[row+1][col+1] == -1)
                     countNeigh++;
         }
 
        if(col-1 >= 0) //not the first col
-           if(gameBoard[col-1][row] == -1)
+           if(gameBoard[row][col-1] == -1)
                countNeigh++;
 
         if(col+1 <cols) //not the last col
-            if(gameBoard[col+1][row] == -1)
+            if(gameBoard[row][col+1] == -1)
                 countNeigh++;
 
         return countNeigh;
 
     }
 
-    public void checkWin()
+    public boolean checkWin()
     {
+        if(counter ==0)
+            return true;
 
+        return false;
     }
 
     public int[][] getGameBoard()
