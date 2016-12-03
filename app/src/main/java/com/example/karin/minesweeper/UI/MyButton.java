@@ -19,6 +19,7 @@ public class MyButton extends Button implements View.OnClickListener, View.OnLon
         this.row = row;
         this.col = col;
         setOnClickListener(this);
+        setOnLongClickListener(this);
     }
 
     @Override
