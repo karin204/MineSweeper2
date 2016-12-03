@@ -20,6 +20,7 @@ public class GameLogic
         this.cols = cols;
         this.mines = mines;
         this.gameBoard = new int[rows][cols];
+        this.buildBoard();
     }
 
     public void buildBoard()
@@ -27,13 +28,17 @@ public class GameLogic
         Random rand = new Random();
         for(int idx = 0; idx < mines; idx++)
         {
-            int x = rand.nextInt(rows+1);
-            int y = rand.nextInt(cols+1);
-            gameBoard[x][y] = -1;
+            int x = rand.nextInt(rows);
+            int y = rand.nextInt(cols);
+            if(gameBoard[x][y] == -1)
+                idx--;
+            else
+                gameBoard[x][y] = -1;
         }
         for(int i=0 ;i<rows; i++)
             for(int j=0;j<cols; j++)
-               gameBoard[i][j]= CalculateNeighbours(i,j);
+                if(gameBoard[i][j] != -1)
+                    gameBoard[i][j]= CalculateNeighbours(i,j);
 
     }
 
@@ -41,7 +46,8 @@ public class GameLogic
     {
         if(this.gameBoard[x][y] == -1)
             return true;
-        else return false;
+        else
+            return false;
     }
 
     public void updateCell()

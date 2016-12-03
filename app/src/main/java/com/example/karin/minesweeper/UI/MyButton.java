@@ -1,7 +1,5 @@
 package com.example.karin.minesweeper.UI;
-import com.example.karin.minesweeper.R;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.View;
 import android.widget.Button;
 
@@ -24,14 +22,20 @@ public class MyButton extends Button implements View.OnClickListener, View.OnLon
     }
 
     @Override
-    public void onClick(View v) {
-
+    public void onClick(View v)
+    {
+        if (listener != null)
+            listener.buttonClick(this);
     }
 
     @Override
-    public boolean onLongClick(View v) {
-       return false;
-
+    public boolean onLongClick(View v)
+    {
+        if (listener != null) {
+            listener.buttonLongClick(this);
+            return true;
+        }
+        return false;
     }
 
     public int getRow()

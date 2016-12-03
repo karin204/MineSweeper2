@@ -1,12 +1,14 @@
 package com.example.karin.minesweeper.UI;
-import com.example.karin.minesweeper.R;
+
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+
+import com.example.karin.minesweeper.R;
 import com.example.karin.minesweeper.logic.GameLogic;
 
 import java.util.Timer;
@@ -16,69 +18,43 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
     public final static String RESULT = "SCORE";
     private GameLogic gameLogic;
     private Timer timer;
-    private String level;
-    private GridLayout board;
-    private int btnX;
-    private int btnY;
-    private MyButton[][] buttons;
+    private int Rows, Cols, Mines;
+    private RelativeLayout rl;
+    //private String level;
+    //private GridLayout board;
+    //private int btnX;
+   // private int btnY;
+    //private MyButton[][] buttons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_game);
-        Intent intent = getIntent();
-        level = intent.getStringExtra(StartPageActivity.DETAILS);
-        board = (GridLayout)findViewById(R.id.board);
 
-        switch (level)
+        rl = (RelativeLayout)findViewById(R.id.activity_game);
+
+        Rows = getIntent().getIntExtra("ROWS",0);
+        Cols = getIntent().getIntExtra("COLS",0);
+        Mines = getIntent().getIntExtra("MINES",0);
+
+        GridLayout grid = (GridLayout)findViewById(R.id.board);
+        grid.setColumnCount(Cols);
+        grid.setRowCount(Rows);
+        grid.setId(0);
+
+        gameLogic = new GameLogic(Rows,Cols,Mines);
+        for(int i=0; i< Rows; i++)
         {
-            case "Easy":
+            for(int j = 0; j< Cols; j++)
             {
-                btnX = 10;
-                btnY = 10;
-                buttons = new MyButton[btnX][btnY];
-                gameLogic = new GameLogic(btnX,btnY,5);
-                board.setRowCount(btnX);
-                board.setColumnCount(btnY);
-                gameLogic.buildBoard();
-
-                for(int xIdx=0; xIdx<btnX; xIdx++)
-                    for(int yIdx=0; yIdx<btnY; yIdx++)
-                    {
-
-                        buttons[xIdx][yIdx] = new MyButton(this,xIdx,yIdx);
-                        board.addView(buttons[xIdx][yIdx]);
-
-                    }
-
-
-
-                break;
-            }
-            case "Medium":
-            {
-                btnX = 10;
-                btnY = 10;
-                buttons = new MyButton[btnX][btnY];
-                gameLogic = new GameLogic(btnX,btnY,10);
-                board.setRowCount(btnX);
-                board.setColumnCount(btnY);
-                gameLogic.buildBoard();
-                break;
-            }
-            case "Hard":
-            {
-                btnX = 5;
-                btnY = 5;
-                buttons = new MyButton[btnX][btnY];
-                gameLogic = new GameLogic(btnX,btnY,10);
-                board.setRowCount(btnX);
-                board.setColumnCount(btnY);
-                gameLogic.buildBoard();
-                break;
+                MyButton btn = new MyButton(this,i,j);
+                android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(120,120); // 60 is height you can set it as u need
+                btn.setLayoutParams(lp);
+                btn.setListener(this);
+                grid.addView(btn);
             }
         }
-
     }
 
     @Override
@@ -88,9 +64,9 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         int curCol = myButton.getCol();
         Intent intent;
 
-        if(gameLogic.getGameBoard()[curRow][curCol] == -1)
+        if(gameLogic.CheckMine(curRow,curCol))
         {
-            intent = new Intent(this,GameActivity.class);
+            intent = new Intent(this,EndGameActivity.class);
             intent.putExtra(RESULT,"Lose");
             startActivity(intent);
         }
@@ -100,6 +76,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
                 myButton.setBackgroundColor(Color.GRAY);
             else
                 myButton.setText(String.valueOf(gameLogic.getGameBoard()[curRow][curCol]));
+
+
         }
     }
 

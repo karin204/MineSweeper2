@@ -1,12 +1,12 @@
 package com.example.karin.minesweeper.UI;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.view.View.OnClickListener;
+import android.widget.Button;
+
 import com.example.karin.minesweeper.R;
 
 
@@ -20,6 +20,7 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_start_page);
 
         btnEasy = (Button)findViewById(R.id.btnEasy);
@@ -42,6 +43,9 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
             {
                 intent = new Intent(this,GameActivity.class);
                 intent.putExtra(DETAILS,"Easy");
+                intent.putExtra("COLS", 10);
+                intent.putExtra("ROWS", 10);
+                intent.putExtra("MINES", 5);
                 startActivity(intent);
                 break;
             }
@@ -50,6 +54,9 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
             {
                 intent = new Intent(this,GameActivity.class);
                 intent.putExtra(DETAILS,"Medium");
+                intent.putExtra("COLS", 10);
+                intent.putExtra("ROWS", 10);
+                intent.putExtra("MINES", 10);
                 startActivity(intent);
                 break;
             }
@@ -58,6 +65,9 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
             {
                 intent = new Intent(this,GameActivity.class);
                 intent.putExtra(DETAILS,"Hard");
+                intent.putExtra("COLS", 5);
+                intent.putExtra("ROWS", 5);
+                intent.putExtra("MINES", 10);
                 startActivity(intent);
                 break;
             }
