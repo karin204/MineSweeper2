@@ -3,26 +3,43 @@ package com.example.karin.minesweeper.UI;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.karin.minesweeper.R;
 import com.example.karin.minesweeper.logic.GameLogic;
 
-import java.util.Timer;
-
 public class GameActivity extends AppCompatActivity implements MyButtonListener{
 
     public final static String RESULT = "SCORE";
     private GameLogic gameLogic;
-    private Timer timer;
     private int Rows, Cols, Mines;
     private RelativeLayout rl;
     private GridLayout grid;
-    //private String level;
+    private TextView timerTextView;
+    long startTime = 0;
+
+    //Timer
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() - startTime;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+
+            timerTextView.setText(String.format("%d:%02d", minutes, seconds));
+
+            timerHandler.postDelayed(this, 1000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +48,11 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         setContentView(R.layout.activity_game);
 
         rl = (RelativeLayout)findViewById(R.id.activity_game);
+
+        //Timer section
+        timerTextView = (TextView) findViewById(R.id.timerTextView);
+        startTime = System.currentTimeMillis();
+        timerHandler.postDelayed(timerRunnable, 0);
 
         Rows = getIntent().getIntExtra("ROWS",0);
         Cols = getIntent().getIntExtra("COLS",0);
@@ -108,13 +130,16 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
 
         if(gameLogic.checkWin())
         {
+            timerHandler.removeCallbacks(timerRunnable);
+
             Toast.makeText(this, "Well Done!!", Toast.LENGTH_LONG).show();
 
+
             intent = new Intent(this,EndGameActivity.class);
+            intent.putExtra("TIME",timerTextView.getText());
             intent.putExtra(RESULT,"Win");
             startActivity(intent);
         }
-
     }
 
     @Override
