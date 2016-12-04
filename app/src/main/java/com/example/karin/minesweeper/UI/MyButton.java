@@ -1,5 +1,6 @@
 package com.example.karin.minesweeper.UI;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Button;
 
@@ -12,6 +13,7 @@ public class MyButton extends Button implements View.OnClickListener, View.OnLon
     private int row;
     private int col;
     private MyButtonListener listener;
+    private Drawable backGround;
 
     public MyButton(Context context,int row, int col)
     {
@@ -20,6 +22,7 @@ public class MyButton extends Button implements View.OnClickListener, View.OnLon
         this.col = col;
         setOnClickListener(this);
         setOnLongClickListener(this);
+        this.backGround = this.getBackground();
     }
 
     @Override
@@ -50,6 +53,9 @@ public class MyButton extends Button implements View.OnClickListener, View.OnLon
 
     public void setCol(int col)
     {this.col = col;}
+
+    public Drawable getBackGround()
+    {return this.backGround;}
 
     public void setListener(MyButtonListener listener)
     {this.listener = listener;}

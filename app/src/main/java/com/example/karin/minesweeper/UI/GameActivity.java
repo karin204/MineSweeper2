@@ -17,6 +17,7 @@ import com.example.karin.minesweeper.logic.GameLogic;
 public class GameActivity extends AppCompatActivity implements MyButtonListener{
 
     public final static String RESULT = "SCORE";
+    public final static String TIMER = "TIME";
     private GameLogic gameLogic;
     private int Rows, Cols, Mines;
     private RelativeLayout rl;
@@ -84,7 +85,9 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
             for(int j = 0; j< Cols; j++)
             {
                 MyButton btn = new MyButton(this,i,j);
-                android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(125,125); // 60 is height you can set it as u need
+                //gridbtnH = ;
+                //gridbtnW = grid.getWidth();
+                android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(45,45); // 60 is height you can set it as u need
                 btn.setLayoutParams(lp);
                 btn.setListener(this);
                 btn.setText(" ");
@@ -147,13 +150,13 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         {
             timerHandler.removeCallbacks(timerRunnable);
 
-            Toast.makeText(this, "Well Done!!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Well Done!!", Toast.LENGTH_LONG).show();
 
 
             intent = new Intent(this,EndGameActivity.class);
-            intent.putExtra("TIME",timerTextView.getText());
+            intent.putExtra(TIMER,timerTextView.getText());
             intent.putExtra(RESULT,"Win");
-            //startActivity(intent);
+            startActivity(intent);
         }
     }
 
