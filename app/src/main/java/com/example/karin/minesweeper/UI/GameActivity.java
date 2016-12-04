@@ -47,6 +47,21 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         getSupportActionBar().hide();
         setContentView(R.layout.activity_game);
 
+        /*
+        String [] players = new String[3];
+        players[0] = "a";
+        players[1] = "b";
+        players[2] = "c";
+
+        SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
+        scoresEditor.putString("p1", players[0]);
+        scoresEditor.apply();
+
+        SharedPreferences scorePref = getSharedPreferences("scores", MODE_PRIVATE);
+        String name = scorePref.getString("p1",null);
+        */
+
+
         rl = (RelativeLayout)findViewById(R.id.activity_game);
 
         //Timer section
