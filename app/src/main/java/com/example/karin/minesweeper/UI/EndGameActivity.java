@@ -1,14 +1,12 @@
 package com.example.karin.minesweeper.UI;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.karin.minesweeper.R;
-
-import org.w3c.dom.Text;
 
 public class EndGameActivity extends AppCompatActivity {
 

@@ -9,7 +9,6 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.karin.minesweeper.R;
 import com.example.karin.minesweeper.logic.GameLogic;
@@ -85,9 +84,9 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
             for(int j = 0; j< Cols; j++)
             {
                 MyButton btn = new MyButton(this,i,j);
-                //gridbtnH = ;
-                //gridbtnW = grid.getWidth();
-                android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(45,45); // 60 is height you can set it as u need
+                int width = getWindowManager().getDefaultDisplay().getWidth();
+                int height = getWindowManager().getDefaultDisplay().getHeight();
+                android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/(Rows+1),width/(Rows+1));
                 btn.setLayoutParams(lp);
                 btn.setListener(this);
                 btn.setText(" ");
@@ -117,9 +116,9 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         {
             if(myButton.isEnabled() && myButton.isClickable())
             {
+                myButton.setEnabled(false);
                 num = gameLogic.updateCell(curRow, curCol);
                 if (num == 0) {
-                    myButton.setEnabled(false);
                     myButton.setBackgroundResource(R.drawable.box_clicked);
                     if ((curRow - 1) >= 0)
                         buttonClick((MyButton) grid.getChildAt((curRow - 1) * Rows + curCol));
@@ -151,8 +150,6 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
             timerHandler.removeCallbacks(timerRunnable);
 
             //Toast.makeText(this, "Well Done!!", Toast.LENGTH_LONG).show();
-
-
             intent = new Intent(this,EndGameActivity.class);
             intent.putExtra(TIMER,timerTextView.getText());
             intent.putExtra(RESULT,"Win");
