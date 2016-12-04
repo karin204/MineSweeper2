@@ -112,7 +112,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         }
         else
         {
-            if(myButton.isEnabled())
+            if(myButton.isEnabled() && myButton.isClickable())
             {
                 num = gameLogic.updateCell(curRow, curCol);
                 if (num == 0) {
@@ -153,16 +153,26 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
             intent = new Intent(this,EndGameActivity.class);
             intent.putExtra("TIME",timerTextView.getText());
             intent.putExtra(RESULT,"Win");
-            startActivity(intent);
+            //startActivity(intent);
         }
     }
 
     @Override
     public void buttonLongClick(MyButton myButton)
     {
-        if(myButton.getBackground().equals(R.drawable.flag))
+
+        if(myButton.getText().equals("flag"))
+        {
+            myButton.setText(" ");
             myButton.setBackgroundResource(R.drawable.mine);
+            myButton.setClickable(true);
+        }
         else
+        {
             myButton.setBackgroundResource(R.drawable.flag);
+            myButton.setText("flag");
+            myButton.setClickable(false);
+            myButton.setTextColor(Color.TRANSPARENT);
+        }
     }
 }
