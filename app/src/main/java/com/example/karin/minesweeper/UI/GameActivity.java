@@ -1,6 +1,7 @@
 package com.example.karin.minesweeper.UI;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
     public final static String TIMER = "TIME";
     private GameLogic gameLogic;
     private int Rows, Cols, Mines;
+    private String Level;
     private RelativeLayout rl;
     private GridLayout grid;
     private TextView timerTextView;
@@ -36,7 +38,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
             int minutes = seconds / 60;
             seconds = seconds % 60;
 
-            timerTextView.setText(String.format("%d:%02d", minutes, seconds));
+            timerTextView.setText(String.format("%02d:%02d", minutes, seconds));
 
             timerHandler.postDelayed(this, 1000);
         }
@@ -73,6 +75,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         Rows = getIntent().getIntExtra("ROWS",0);
         Cols = getIntent().getIntExtra("COLS",0);
         Mines = getIntent().getIntExtra("MINES",0);
+        Level = getIntent().getStringExtra("DETAILS");
 
         grid = (GridLayout)findViewById(R.id.board);
         grid.setColumnCount(Cols);
@@ -133,7 +136,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
             {
                 myButton.setEnabled(false);
                 num = gameLogic.updateCell(curRow, curCol);
-                if (num == 0) {
+                if (num == 0)
+                {
                     myButton.setBackgroundResource(R.drawable.box_clicked);
                     if ((curRow - 1) >= 0)
                         buttonClick((MyButton) grid.getChildAt((curRow - 1) * Rows + curCol));
@@ -151,7 +155,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
                         buttonClick((MyButton) grid.getChildAt((curRow - 1) * Rows + curCol - 1));
                     if ((curCol - 1) >= 0 && (curRow + 1) <= Rows - 1)
                         buttonClick((MyButton) grid.getChildAt((curRow + 1) * Rows + curCol - 1));
-                } else
+                }
+                else
                 {
                     myButton.setBackgroundResource(R.drawable.box_clicked);
                     myButton.setText(num + "");
@@ -166,6 +171,40 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
 
             Toast.makeText(this, "Well Done!!", Toast.LENGTH_LONG).show();
             final Intent intent1 = new Intent(this,EndGameActivity.class);
+
+            CharSequence score = timerTextView.getText();
+
+            SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
+            SharedPreferences scores = getSharedPreferences("scores", MODE_PRIVATE);
+            if(scores.contains(Level))
+            {
+                String oldScore = scores.getString(Level,null);
+                int l = oldScore.length()-5;
+                int newScorePos = 0;
+                for(int i = l; i < oldScore.length(); i++)
+                {
+                    if(oldScore.charAt(i) < score.charAt(newScorePos))
+                        break;
+                    else if(oldScore.charAt(i) > score.charAt(newScorePos))
+                    {
+                        Intent intent2 = new Intent(this,NewHighScoreActivity.class);
+                        intent2.putExtra(RESULT,"Lose");
+                        startActivity(intent2);
+
+                        //scoresEditor.putString(Level, (String) score);
+                        //scoresEditor.apply();
+                    }
+                }
+            }
+            else
+            {
+                Intent intent2 = new Intent(this,NewHighScoreActivity.class);
+                intent2.putExtra(RESULT,"Lose");
+                startActivity(intent2);
+                //scoresEditor.putString(Level, (String) score);
+                //scoresEditor.apply();
+            }
+
             intent1.putExtra(TIMER,timerTextView.getText());
             intent1.putExtra(RESULT,"Win");
             Handler handler = new Handler();

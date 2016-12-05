@@ -19,6 +19,8 @@
             android:screenOrientation="portrait"></activity>
         <activity android:name=".UI.EndGameActivity"
             android:screenOrientation="portrait"></activity>
+        <activity android:name=".UI.NewHighScoreActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
