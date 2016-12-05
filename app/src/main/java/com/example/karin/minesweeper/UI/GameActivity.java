@@ -188,23 +188,28 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
                     else if(oldScore.charAt(i) > score.charAt(newScorePos))
                     {
                         Intent intent2 = new Intent(this,NewHighScoreActivity.class);
-                        intent2.putExtra(RESULT,"Lose");
+                        intent2.putExtra("SCORE",score);
+                        intent2.putExtra("LEVEL",Level);
                         startActivity(intent2);
-
-                        //scoresEditor.putString(Level, (String) score);
-                        //scoresEditor.apply();
                     }
                 }
             }
             else
             {
-                Intent intent2 = new Intent(this,NewHighScoreActivity.class);
-                intent2.putExtra(RESULT,"Lose");
-                startActivity(intent2);
-                //scoresEditor.putString(Level, (String) score);
-                //scoresEditor.apply();
-            }
+                final Intent intent2 = new Intent(this,NewHighScoreActivity.class);
+                intent2.putExtra("SCORE",score);
+                intent2.putExtra("LEVEL",Level);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable(){
+                    @Override
+                    public void run(){
 
+                        startActivity(intent2);
+                    }
+                }, 3000);
+
+            }
+            /*
             intent1.putExtra(TIMER,timerTextView.getText());
             intent1.putExtra(RESULT,"Win");
             Handler handler = new Handler();
@@ -214,7 +219,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
 
                     //startActivity(intent1);
                 }
-            }, 3000);
+            }, 3000);*/
 
         }
     }

@@ -2,29 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <TextView
-        android:text="00:00"
+    <Button
+        android:text="Submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:textSize="10sp"
-        android:layout_alignBaseline="@+id/textView2"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_alignRight="@+id/textView1"
-        android:layout_alignEnd="@+id/textView1"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:text="Enter your name:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:id="@+id/textView6"
-        android:textSize="10sp"
+        android:id="@+id/button"
         android:textStyle="normal|bold"
-        android:layout_below="@+id/textView2"
-        android:layout_alignRight="@+id/textView2"
-        android:layout_alignEnd="@+id/textView2" />
+        android:layout_below="@+id/editText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
 
     <TextView
         android:text="Congratulations!!"
@@ -32,7 +18,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView1"
         android:textSize="14sp"
-        android:layout_marginTop="59dp"
+        android:layout_marginTop="12dp"
         android:textStyle="normal|bold"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
@@ -41,15 +27,27 @@
         android:text="New high score:"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="31dp"
         android:id="@+id/textView2"
         android:textSize="10sp"
         android:textStyle="normal|bold"
+        android:layout_marginRight="33dp"
+        android:layout_marginEnd="33dp"
         android:layout_below="@+id/textView1"
         android:layout_toLeftOf="@+id/textView3"
-        android:layout_toStartOf="@+id/textView3"
-        android:layout_marginRight="55dp"
-        android:layout_marginEnd="55dp" />
+        android:layout_toStartOf="@+id/textView3" />
+
+    <TextView
+        android:text="Enter your name:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="29dp"
+        android:id="@+id/textView6"
+        android:textSize="10sp"
+        android:textStyle="normal|bold"
+        android:layout_below="@+id/textView2"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignStart="@+id/textView2" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -59,21 +57,21 @@
         android:id="@+id/editText"
         android:textStyle="normal|bold"
         android:hint="Name"
-        android:layout_marginLeft="40dp"
-        android:layout_marginStart="40dp"
         android:textSize="10sp"
         android:layout_alignBaseline="@+id/textView6"
         android:layout_alignBottom="@+id/textView6"
         android:layout_toRightOf="@+id/textView6"
         android:layout_toEndOf="@+id/textView6" />
 
-    <Button
-        android:text="Submit"
+    <TextView
+        android:text="00:00"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button"
+        android:id="@+id/textView3"
+        android:textSize="10sp"
         android:textStyle="normal|bold"
-        android:elevation="0dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignBaseline="@+id/textView2"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_alignRight="@+id/textView1"
+        android:layout_alignEnd="@+id/textView1" />
 </RelativeLayout>
