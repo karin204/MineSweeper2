@@ -13,6 +13,7 @@ public class GameLogic
     private int mines;
     private int counter;
     private int[][] gameBoard;
+    private int [] minePos;
 
     public GameLogic(int rows, int cols,int mines)
     {
@@ -21,6 +22,7 @@ public class GameLogic
         this.mines = mines;
         this.counter = rows*cols-mines;
         this.gameBoard = new int[rows][cols];
+        this.minePos = new int[mines];
         this.buildBoard();
     }
 
@@ -34,7 +36,10 @@ public class GameLogic
             if(gameBoard[x][y] == -1)
                 idx--;
             else
+            {
                 gameBoard[x][y] = -1;
+                minePos[idx] = x*this.rows+y;
+            }
         }
         for(int i=0 ;i<rows; i++)
             for(int j=0;j<cols; j++)
@@ -113,4 +118,7 @@ public class GameLogic
 
     public int getCols()
     {return this.cols;}
+
+    public int[] getMinePos()
+    {   return minePos; }
 }

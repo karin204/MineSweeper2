@@ -9,6 +9,7 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.karin.minesweeper.R;
 import com.example.karin.minesweeper.logic.GameLogic;
@@ -91,7 +92,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
                 btn.setListener(this);
                 btn.setText(" ");
                 btn.setTextSize(9);
-                btn.setBackgroundResource(R.drawable.mine);
+                btn.setBackgroundResource(R.drawable.box);
 
                 grid.addView(btn);
             }
@@ -104,13 +105,27 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         int num;
         int curRow = myButton.getRow();
         int curCol = myButton.getCol();
-        Intent intent;
+        final Intent intent;
 
         if(gameLogic.CheckMine(curRow,curCol))
         {
+            Toast.makeText(this, "You Lost!!", Toast.LENGTH_LONG).show();
+            int [] mines = new int[Mines];
+            mines = gameLogic.getMinePos();
+            for(int i = 0; i< Mines; i++)
+                grid.getChildAt(mines[i]).setBackgroundResource(R.drawable.mine);
+            myButton.setBackgroundResource(R.drawable.mine_clicked);
+
             intent = new Intent(this,EndGameActivity.class);
             intent.putExtra(RESULT,"Lose");
-            startActivity(intent);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable(){
+                @Override
+                public void run(){
+
+                    startActivity(intent);
+                }
+            }, 3000);
         }
         else
         {
@@ -149,11 +164,19 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         {
             timerHandler.removeCallbacks(timerRunnable);
 
-            //Toast.makeText(this, "Well Done!!", Toast.LENGTH_LONG).show();
-            intent = new Intent(this,EndGameActivity.class);
-            intent.putExtra(TIMER,timerTextView.getText());
-            intent.putExtra(RESULT,"Win");
-            startActivity(intent);
+            Toast.makeText(this, "Well Done!!", Toast.LENGTH_LONG).show();
+            final Intent intent1 = new Intent(this,EndGameActivity.class);
+            intent1.putExtra(TIMER,timerTextView.getText());
+            intent1.putExtra(RESULT,"Win");
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable(){
+                @Override
+                public void run(){
+
+                    startActivity(intent1);
+                }
+            }, 3000);
+
         }
     }
 
@@ -164,7 +187,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         if(myButton.getText().equals("flag"))
         {
             myButton.setText(" ");
-            myButton.setBackgroundResource(R.drawable.mine);
+            myButton.setBackgroundResource(R.drawable.box);
             myButton.setClickable(true);
         }
         else
