@@ -212,7 +212,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
                 @Override
                 public void run(){
 
-                    startActivity(intent1);
+                    //startActivity(intent1);
                 }
             }, 3000);
 
