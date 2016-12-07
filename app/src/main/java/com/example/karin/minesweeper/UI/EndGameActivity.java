@@ -3,8 +3,10 @@ package com.example.karin.minesweeper.UI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 
 import com.example.karin.minesweeper.R;
 
@@ -37,4 +39,23 @@ public class EndGameActivity extends AppCompatActivity {
             txtTime.setText(time);
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            onBackPressed();
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+       // super.onBackPressed();
+        Intent intent = new Intent(EndGameActivity.this,StartPageActivity.class);
+        startActivity(intent);
+        finish();
+
+    }
+
+
 }

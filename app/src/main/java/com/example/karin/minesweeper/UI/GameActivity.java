@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -17,6 +18,7 @@ import com.example.karin.minesweeper.logic.GameLogic;
 
 public class GameActivity extends AppCompatActivity implements MyButtonListener{
 
+    public final static String DETAILS = "LEVEL";
     public final static String RESULT = "SCORE";
     public final static String TIMER = "TIME";
     private GameLogic gameLogic;
@@ -75,7 +77,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         Rows = getIntent().getIntExtra("ROWS",0);
         Cols = getIntent().getIntExtra("COLS",0);
         Mines = getIntent().getIntExtra("MINES",0);
-        Level = getIntent().getStringExtra("DETAILS");
+        Level = getIntent().getStringExtra(DETAILS);
 
         grid = (GridLayout)findViewById(R.id.board);
         grid.setColumnCount(Cols);
@@ -100,6 +102,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
                 grid.addView(btn);
             }
         }
+
+
     }
 
     @Override
@@ -241,5 +245,20 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
             myButton.setClickable(false);
             myButton.setTextColor(Color.TRANSPARENT);
         }
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            onBackPressed();
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(GameActivity.this,StartPageActivity.class);
+        startActivity(intent);
+        finish();
+
     }
 }

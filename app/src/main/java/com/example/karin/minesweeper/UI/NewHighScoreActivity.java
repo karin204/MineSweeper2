@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,12 +48,27 @@ public class NewHighScoreActivity extends AppCompatActivity
 
                 name = name + " - " +score;
                 SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
-                //scoresEditor.putString(level, (String) name);
-                //scoresEditor.apply();
+                scoresEditor.putString(level, (String) name);
+                scoresEditor.apply();
 
                 startActivity(intent);
             }
         });
+
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            onBackPressed();
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(NewHighScoreActivity.this,StartPageActivity.class);
+        startActivity(intent);
+        finish();
 
     }
 }
