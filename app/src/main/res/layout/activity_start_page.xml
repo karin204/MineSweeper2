@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_start_page"
     android:layout_width="match_parent"
@@ -13,52 +12,58 @@
 
     <RelativeLayout
         android:id="@+id/startPage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:background="@drawable/startscreen"
+        android:fitsSystemWindows="false"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
-        <Button
-            android:id="@+id/btnHard"
-            android:layout_height="80dp"
-            android:background="@drawable/hard"
-            android:layout_width="80dp"
-            android:layout_marginRight="27dp"
-            android:layout_marginEnd="27dp"
-            android:layout_alignTop="@+id/btnEasy"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="21dp" />
+        <RelativeLayout
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="103dp"
+            android:id="@+id/buttonsLayout"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true">
 
-        <Button
-            android:id="@+id/btnEasy"
-            android:layout_height="80dp"
-            android:background="@drawable/easy"
-            android:layout_width="80dp"
-            android:layout_marginLeft="19dp"
-            android:layout_marginStart="19dp"
-            android:layout_marginTop="152dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            <Button
+                android:id="@+id/btnHard"
+                android:background="@drawable/hard"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
 
-        <Button
+            <Button
             android:id="@+id/btnMedium"
-            android:layout_height="80dp"
-            android:background="@drawable/medium"
-            android:layout_width="80dp"
-            android:layout_alignBottom="@+id/btnEasy"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="21dp" />
+                android:background="@drawable/medium"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/btnEasy"
+                android:layout_toEndOf="@+id/btnEasy" />
+
+            <Button
+            android:id="@+id/btnEasy"
+                android:background="@drawable/easy"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+        </RelativeLayout>
 
         <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/scores"
-            android:layout_below="@+id/btnHard"
-            android:layout_marginTop="92dp">
+            android:background="@drawable/scorejpg"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp">
 
             <TableRow
                 android:layout_width="match_parent"
@@ -70,14 +75,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/level"
-                    tools:textAlignment="center" />
+                    tools:textAlignment="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    tools:textStyle="bold" />
 
                 <TextView
-                    android:text="Score"
+                    android:text="Name Best Time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/score"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"
+                    android:textColor="@android:color/background_dark"
+                    android:textSize="18sp"
+                    tools:textStyle="bold" />
             </TableRow>
 
             <TableRow
@@ -90,13 +101,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/easy"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:text="00:00"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/timeEasy" />
+                    android:id="@+id/timeEasy"
+                    android:textColor="@android:color/black"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
             </TableRow>
 
             <TableRow
@@ -109,13 +126,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/medium"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:text="00:00"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/timeMed" />
+                    android:id="@+id/timeMed"
+                    android:textColor="@android:color/black"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
             </TableRow>
 
             <TableRow
@@ -128,13 +151,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/Hard"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"
+                    android:textColor="@android:color/black"
+                    tools:textStyle="bold"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:text="00:00"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/timeHard" />
+                    android:id="@+id/timeHard"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textAlignment="center" />
             </TableRow>
 
         </TableLayout>

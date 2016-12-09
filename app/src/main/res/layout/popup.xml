@@ -1,77 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/cong">
 
-    <Button
-        android:text="Submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button"
-        android:textStyle="normal|bold"
-        android:layout_below="@+id/editText"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
-
-    <TextView
-        android:text="Congratulations!!"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView1"
-        android:textSize="14sp"
-        android:layout_marginTop="12dp"
-        android:textStyle="normal|bold"
+    <RelativeLayout
+        android:id="@+id/textViewLayout"
+        android:layout_marginTop="170dp"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true">
 
-    <TextView
-        android:text="New high score:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="31dp"
-        android:id="@+id/textView2"
-        android:textSize="10sp"
-        android:textStyle="normal|bold"
-        android:layout_marginRight="33dp"
-        android:layout_marginEnd="33dp"
-        android:layout_below="@+id/textView1"
-        android:layout_toLeftOf="@+id/textView3"
-        android:layout_toStartOf="@+id/textView3" />
+        <TextView
+            android:text="00:00"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/time"
+            android:textSize="10sp"
+            android:textStyle="normal|bold"
+            android:layout_alignBaseline="@+id/newHighScore"
+            android:layout_alignBottom="@+id/newHighScore"
+            android:layout_alignLeft="@+id/name"
+            android:layout_alignStart="@+id/name"
+            android:textColor="@android:color/black"
+            android:textAlignment="center" />
 
-    <TextView
-        android:text="Enter your name:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
-        android:id="@+id/textView6"
-        android:textSize="10sp"
-        android:textStyle="normal|bold"
-        android:layout_below="@+id/textView2"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_alignStart="@+id/textView2" />
+        <TextView
+            android:text="Enter your name:"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/enterName"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_alignBaseline="@+id/name"
+            android:layout_alignBottom="@+id/name"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/editText"
-        android:textStyle="normal|bold"
-        android:hint="Name"
-        android:textSize="10sp"
-        android:layout_alignBaseline="@+id/textView6"
-        android:layout_alignBottom="@+id/textView6"
-        android:layout_toRightOf="@+id/textView6"
-        android:layout_toEndOf="@+id/textView6" />
+        <Button
+            android:text="Submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/submit"
+            android:textStyle="normal|bold"
+            android:background="@android:color/transparent"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:text="00:00"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:textSize="10sp"
-        android:textStyle="normal|bold"
-        android:layout_alignBaseline="@+id/textView2"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_alignRight="@+id/textView1"
-        android:layout_alignEnd="@+id/textView1" />
+        <TextView
+            android:text="New high score:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/newHighScore"
+            android:textSize="12sp"
+            android:textStyle="normal|bold"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="37dp"
+            tools:textStyle="bold"
+            android:layout_above="@+id/enterName"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/name"
+            android:textStyle="normal|bold"
+            android:hint="Name"
+            android:textSize="12sp"
+            android:textColor="@android:color/black"
+            android:textAlignment="center"
+            android:layout_above="@+id/submit"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
 </RelativeLayout>

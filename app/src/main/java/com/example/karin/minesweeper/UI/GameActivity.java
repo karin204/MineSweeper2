@@ -172,7 +172,6 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         if(gameLogic.checkWin())
         {
             timerHandler.removeCallbacks(timerRunnable);
-
             Toast.makeText(this, "Well Done!!", Toast.LENGTH_LONG).show();
             final Intent intent1 = new Intent(this,EndGameActivity.class);
 

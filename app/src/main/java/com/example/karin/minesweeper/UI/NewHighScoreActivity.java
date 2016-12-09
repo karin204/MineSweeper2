@@ -34,11 +34,11 @@ public class NewHighScoreActivity extends AppCompatActivity
         final String level = getIntent().getStringExtra("LEVEL");
         final Intent intent = new Intent(this,StartPageActivity.class);
 
-        TextView s = (TextView)findViewById(R.id.textView3);
-        final EditText e = (EditText)findViewById(R.id.editText);
+        TextView s = (TextView)findViewById(R.id.time);
+        final EditText e = (EditText)findViewById(R.id.name);
         s.setText(score);
 
-        Button b = (Button)findViewById(R.id.button);
+        Button b = (Button)findViewById(R.id.submit);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
