@@ -1,7 +1,6 @@
 package com.example.karin.minesweeper.UI;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -263,16 +262,9 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         dialog.setTitle("New High Score!");
         dialog.setContentView(R.layout.popup);
 
-        //cancel back operation
-        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    return true;
-                }
-                return false;
-            }
-        });
+        //cancel back operation and outside click
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
 
         final EditText editText = (EditText)dialog.findViewById(R.id.name);
         TextView s = (TextView)dialog.findViewById(R.id.score);
