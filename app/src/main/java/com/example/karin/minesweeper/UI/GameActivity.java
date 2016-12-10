@@ -172,6 +172,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
     public void loose(MyButton myButton)
     {
         timerHandler.removeCallbacks(timerRunnable);
+        endGame = true;
         Toast.makeText(this, "You Lost!!", Toast.LENGTH_SHORT).show();
         int [] mines = new int[Mines];
         mines = gameLogic.getMinePos();
