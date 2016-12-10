@@ -2,6 +2,7 @@ package com.example.karin.minesweeper.UI;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.widget.RelativeLayout;
@@ -17,14 +18,16 @@ public class EndGameActivity extends AppCompatActivity {
     TextView txtRes;
     TextView txtTime;
     RelativeLayout endLayout;
+    Intent startIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_end_game);
         Intent intent = getIntent();
-        result = intent.getStringExtra(GameActivity.RESULT) ;
-        time = intent.getStringExtra(GameActivity.TIMER);
+        startIntent = new Intent(EndGameActivity.this,StartPageActivity.class);
+        result = intent.getStringExtra("LEVEL");
+        time = intent.getStringExtra("TIMER");
         endLayout = (RelativeLayout)findViewById(R.id.activity_end_game);
 
         txtRes = (TextView)findViewById(R.id.txtPlayer);
@@ -38,6 +41,16 @@ public class EndGameActivity extends AppCompatActivity {
             endLayout.setBackgroundResource(R.drawable.winer);
             txtTime.setText(time);
         }
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+
+                startActivity(startIntent);
+                finish();
+            }
+        }, 3000);
     }
 
     @Override
@@ -50,12 +63,6 @@ public class EndGameActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-       // super.onBackPressed();
-        Intent intent = new Intent(EndGameActivity.this,StartPageActivity.class);
-        startActivity(intent);
-        finish();
 
     }
-
-
 }

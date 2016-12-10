@@ -29,8 +29,6 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
         getSupportActionBar().hide();
         setContentView(R.layout.activity_start_page);
 
-
-
         btnEasy = (Button)findViewById(R.id.btnEasy);
         btnMedium = (Button)findViewById(R.id.btnMedium);
         btnHard = (Button)findViewById(R.id.btnHard);
@@ -60,6 +58,7 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
                 intent.putExtra("MINES", 5);
                 intent.putExtra(DETAILS,"Easy");
                 startActivity(intent);
+                finish();
                 break;
             }
 
@@ -71,6 +70,7 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
                 intent.putExtra("MINES", 10);
                 intent.putExtra(DETAILS,"Medium");
                 startActivity(intent);
+                finish();
                 break;
             }
 
@@ -82,6 +82,7 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
                 intent.putExtra("MINES", 10);
                 intent.putExtra(DETAILS,"Hard");
                 startActivity(intent);
+                finish();
                 break;
             }
 

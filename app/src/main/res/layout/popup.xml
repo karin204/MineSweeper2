@@ -4,78 +4,86 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:background="@drawable/cong">
 
-    <RelativeLayout
-        android:id="@+id/textViewLayout"
-        android:layout_marginTop="170dp"
-        android:layout_width="300dp"
-        android:layout_height="150dp"
-        android:layout_alignParentTop="true"
+    <TableLayout
+        android:id="@+id/scores"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true">
 
-        <TextView
-            android:text="00:00"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/time"
-            android:textSize="10sp"
-            android:textStyle="normal|bold"
-            android:layout_alignBaseline="@+id/newHighScore"
-            android:layout_alignBottom="@+id/newHighScore"
-            android:layout_alignLeft="@+id/name"
-            android:layout_alignStart="@+id/name"
-            android:textColor="@android:color/black"
-            android:textAlignment="center" />
-
-        <TextView
-            android:text="Enter your name:"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/enterName"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:layout_alignBaseline="@+id/name"
-            android:layout_alignBottom="@+id/name"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <Button
-            android:text="Submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/submit"
-            android:textStyle="normal|bold"
-            android:background="@android:color/transparent"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
-
-        <TextView
-            android:text="New high score:"
+        <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/newHighScore"
-            android:textSize="12sp"
-            android:textStyle="normal|bold"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="37dp"
-            tools:textStyle="bold"
-            android:layout_above="@+id/enterName"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_height="match_parent"
+            android:id="@+id/row1" >
 
-        <EditText
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/name"
-            android:textStyle="normal|bold"
-            android:hint="Name"
-            android:textSize="12sp"
-            android:textColor="@android:color/black"
-            android:textAlignment="center"
-            android:layout_above="@+id/submit"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
-    </RelativeLayout>
+            <TextView
+                android:text="New high score:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/level"
+                tools:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24sp"
+                tools:textStyle="bold"
+                android:textStyle="normal|bold" />
+
+            <TextView
+                android:text="00:00"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/score"
+                android:textAlignment="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="24sp"
+                tools:textStyle="bold"
+                android:textStyle="normal|bold" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/row2" >
+
+            <TextView
+                android:text="Enter your name:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/easy"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="24sp" />
+
+            <EditText
+                android:inputType="textPersonName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/name"
+                android:textColor="@android:color/black"
+                android:textAlignment="center"
+                android:hint="Name"
+                android:textSize="24sp"
+                android:textStyle="normal|bold" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/row3" >
+
+            <Button
+                android:text="Submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/submit"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24sp"
+                android:background="@android:color/transparent"
+                android:textStyle="bold" />
+        </TableRow>
+
+    </TableLayout>
+
 </RelativeLayout>

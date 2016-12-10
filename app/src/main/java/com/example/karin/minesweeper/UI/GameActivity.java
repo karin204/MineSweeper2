@@ -1,5 +1,7 @@
 package com.example.karin.minesweeper.UI;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -7,24 +9,25 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.karin.minesweeper.R;
 import com.example.karin.minesweeper.logic.GameLogic;
 
+import java.util.ArrayList;
+
 public class GameActivity extends AppCompatActivity implements MyButtonListener{
 
     public final static String DETAILS = "LEVEL";
-    public final static String RESULT = "SCORE";
-    public final static String TIMER = "TIME";
     private GameLogic gameLogic;
     private int Rows, Cols, Mines;
     private String Level;
-    private RelativeLayout rl;
     private GridLayout grid;
     private TextView timerTextView;
     long startTime = 0;
@@ -32,18 +35,18 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
     //Timer
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
-
         @Override
-        public void run() {
-            long millis = System.currentTimeMillis() - startTime;
-            int seconds = (int) (millis / 1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
+        public void run()
+        {
+                long millis = System.currentTimeMillis() - startTime;
+                int seconds = (int) (millis / 1000);
+                int minutes = seconds / 60;
+                seconds = seconds % 60;
 
-            timerTextView.setText(String.format("%02d:%02d", minutes, seconds));
+                timerTextView.setText(String.format("%02d:%02d", minutes, seconds));
 
-            timerHandler.postDelayed(this, 1000);
-        }
+                timerHandler.postDelayed(this, 1000);
+            }
     };
 
     @Override
@@ -51,23 +54,6 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_game);
-
-        /*
-        String [] players = new String[3];
-        players[0] = "a";
-        players[1] = "b";
-        players[2] = "c";
-
-        SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
-        scoresEditor.putString("p1", players[0]);
-        scoresEditor.apply();
-
-        SharedPreferences scorePref = getSharedPreferences("scores", MODE_PRIVATE);
-        String name = scorePref.getString("p1",null);
-        */
-
-
-        rl = (RelativeLayout)findViewById(R.id.activity_game);
 
         //Timer section
         timerTextView = (TextView) findViewById(R.id.timerTextView);
@@ -102,135 +88,57 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
                 grid.addView(btn);
             }
         }
+    }
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        startTime = System.currentTimeMillis();
+        timerHandler.removeCallbacks(timerRunnable);
+    }
 
-
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        timerHandler.postDelayed(timerRunnable, 0);
     }
 
     @Override
     public void buttonClick(MyButton myButton)
     {
-        int num;
         int curRow = myButton.getRow();
         int curCol = myButton.getCol();
-        final Intent intent;
 
-        if(gameLogic.CheckMine(curRow,curCol))
-        {
-            Toast.makeText(this, "You Lost!!", Toast.LENGTH_LONG).show();
-            int [] mines = new int[Mines];
-            mines = gameLogic.getMinePos();
-            for(int i = 0; i< Mines; i++)
-                grid.getChildAt(mines[i]).setBackgroundResource(R.drawable.mine);
-            myButton.setBackgroundResource(R.drawable.mine_clicked);
-
-            intent = new Intent(this,EndGameActivity.class);
-            intent.putExtra(RESULT,"Lose");
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable(){
-                @Override
-                public void run(){
-
-                    startActivity(intent);
-                }
-            }, 3000);
-        }
+        //step on mine
+        if(myButton.isClickable() && gameLogic.CheckMine(curRow,curCol))
+            loose(myButton);
+        //step on no mine
         else
-        {
             if(myButton.isEnabled() && myButton.isClickable())
-            {
-                myButton.setEnabled(false);
-                num = gameLogic.updateCell(curRow, curCol);
-                if (num == 0)
-                {
-                    myButton.setBackgroundResource(R.drawable.box_clicked);
-                    if ((curRow - 1) >= 0)
-                        buttonClick((MyButton) grid.getChildAt((curRow - 1) * Rows + curCol));
-                    if ((curRow + 1) <= Rows - 1)
-                        buttonClick((MyButton) grid.getChildAt((curRow + 1) * Rows + curCol));
-                    if ((curCol - 1) >= 0)
-                        buttonClick((MyButton) grid.getChildAt(curRow * Rows + curCol - 1));
-                    if ((curCol + 1) <= Cols - 1)
-                        buttonClick((MyButton) grid.getChildAt(curRow * Rows + curCol + 1));
-                    if ((curCol + 1) <= Cols - 1 && (curRow + 1) <= Rows - 1)
-                        buttonClick((MyButton) grid.getChildAt((curRow + 1) * Rows + curCol + 1));
-                    if ((curCol + 1) <= Cols - 1 && (curRow - 1) >= 0)
-                        buttonClick((MyButton) grid.getChildAt((curRow - 1) * Rows + curCol + 1));
-                    if ((curCol - 1) >= 0 && (curRow - 1) >= 0)
-                        buttonClick((MyButton) grid.getChildAt((curRow - 1) * Rows + curCol - 1));
-                    if ((curCol - 1) >= 0 && (curRow + 1) <= Rows - 1)
-                        buttonClick((MyButton) grid.getChildAt((curRow + 1) * Rows + curCol - 1));
-                }
-                else
-                {
-                    myButton.setBackgroundResource(R.drawable.box_clicked);
-                    myButton.setText(num + "");
-                    myButton.setTextColor(Color.RED);
-                }
-            }
-        }
+                noMineClick(myButton, curRow, curCol);
 
         if(gameLogic.checkWin())
         {
             timerHandler.removeCallbacks(timerRunnable);
-            Toast.makeText(this, "Well Done!!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Well Done!!", Toast.LENGTH_SHORT).show();
             final Intent intent1 = new Intent(this,EndGameActivity.class);
-
-            CharSequence score = timerTextView.getText();
-
+            final CharSequence score = timerTextView.getText();
             SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
             SharedPreferences scores = getSharedPreferences("scores", MODE_PRIVATE);
+
+            //there is an high score -> need to check if the new score is better
             if(scores.contains(Level))
-            {
-                String oldScore = scores.getString(Level,null);
-                int l = oldScore.length()-5;
-                int newScorePos = 0;
-                for(int i = l; i < oldScore.length(); i++)
-                {
-                    if(oldScore.charAt(i) < score.charAt(newScorePos))
-                        break;
-                    else if(oldScore.charAt(i) > score.charAt(newScorePos))
-                    {
-                        Intent intent2 = new Intent(this,NewHighScoreActivity.class);
-                        intent2.putExtra("SCORE",score);
-                        intent2.putExtra("LEVEL",Level);
-                        startActivity(intent2);
-                    }
-                }
-            }
+                checkHigherScore(scores, score);
+            //no previous high score
             else
-            {
-                final Intent intent2 = new Intent(this,NewHighScoreActivity.class);
-                intent2.putExtra("SCORE",score);
-                intent2.putExtra("LEVEL",Level);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable(){
-                    @Override
-                    public void run(){
-
-                        startActivity(intent2);
-                    }
-                }, 3000);
-
-            }
-            /*
-            intent1.putExtra(TIMER,timerTextView.getText());
-            intent1.putExtra(RESULT,"Win");
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable(){
-                @Override
-                public void run(){
-
-                    //startActivity(intent1);
-                }
-            }, 3000);*/
-
+                newHighScore(score);
         }
     }
 
     @Override
     public void buttonLongClick(MyButton myButton)
     {
-
         if(myButton.getText().equals("flag"))
         {
             myButton.setText(" ");
@@ -246,10 +154,158 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         }
     }
 
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            onBackPressed();
+    public void disableButtons(GridLayout layout)
+    {
+        // Get all touchable views
+        ArrayList<View> layoutButtons = layout.getTouchables();
+
+        // loop through them, if they are an instance of Button, disable it.
+        for(View v : layoutButtons){
+            if( v instanceof Button ) {
+                ((Button)v).setEnabled(false);
+            }
         }
+    }
+
+    public void loose(MyButton myButton)
+    {
+        Toast.makeText(this, "You Lost!!", Toast.LENGTH_SHORT).show();
+        int [] mines = new int[Mines];
+        mines = gameLogic.getMinePos();
+        for(int i = 0; i< Mines; i++)
+            grid.getChildAt(mines[i]).setBackgroundResource(R.drawable.mine);
+        myButton.setBackgroundResource(R.drawable.mine_clicked);
+        disableButtons(grid);
+
+        final Intent intent = new Intent(this, EndGameActivity.class);
+        intent.putExtra(DETAILS,"Lose");
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+
+                startActivity(intent);
+                finish();
+            }
+        }, 3000);
+    }
+
+    public void noMineClick(MyButton myButton, int curRow, int curCol)
+    {
+        myButton.setEnabled(false);
+        int num = gameLogic.updateCell(curRow, curCol);
+        if (num == 0)
+        {
+            myButton.setBackgroundResource(R.drawable.box_clicked);
+            if ((curRow - 1) >= 0)
+                buttonClick((MyButton) grid.getChildAt((curRow - 1) * Rows + curCol));
+            if ((curRow + 1) <= Rows - 1)
+                buttonClick((MyButton) grid.getChildAt((curRow + 1) * Rows + curCol));
+            if ((curCol - 1) >= 0)
+                buttonClick((MyButton) grid.getChildAt(curRow * Rows + curCol - 1));
+            if ((curCol + 1) <= Cols - 1)
+                buttonClick((MyButton) grid.getChildAt(curRow * Rows + curCol + 1));
+            if ((curCol + 1) <= Cols - 1 && (curRow + 1) <= Rows - 1)
+                buttonClick((MyButton) grid.getChildAt((curRow + 1) * Rows + curCol + 1));
+            if ((curCol + 1) <= Cols - 1 && (curRow - 1) >= 0)
+                buttonClick((MyButton) grid.getChildAt((curRow - 1) * Rows + curCol + 1));
+            if ((curCol - 1) >= 0 && (curRow - 1) >= 0)
+                buttonClick((MyButton) grid.getChildAt((curRow - 1) * Rows + curCol - 1));
+            if ((curCol - 1) >= 0 && (curRow + 1) <= Rows - 1)
+                buttonClick((MyButton) grid.getChildAt((curRow + 1) * Rows + curCol - 1));
+        }
+        else
+        {
+            myButton.setBackgroundResource(R.drawable.box_clicked);
+            myButton.setText(num + "");
+            myButton.setTextColor(Color.RED);
+        }
+    }
+
+    public void checkHigherScore(SharedPreferences scores, CharSequence score)
+    {
+        String oldScore = scores.getString(Level,null);
+        int l = oldScore.length()-5;
+        int newScorePos = 0;
+        for(int i = l; i < oldScore.length(); i++, newScorePos++)
+        {
+            //No new high score
+            if(oldScore.charAt(i) < score.charAt(newScorePos))
+            {
+                final Intent intent2 = new Intent(this,EndGameActivity.class);
+                intent2.putExtra(DETAILS,"win");
+                intent2.putExtra("TIMER",score);
+
+                disableButtons(grid);
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable(){
+                    @Override
+                    public void run(){
+                        startActivity(intent2);
+                        finish();
+                    }
+                }, 3000);
+                break;
+            }
+            //New high score
+            else if(oldScore.charAt(i) > score.charAt(newScorePos)) {
+                newHighScore(score);
+                break;
+            }
+        }
+    }
+
+    public void newHighScore(final CharSequence score)
+    {
+        final Intent intent = new Intent(this,StartPageActivity.class);
+        final Dialog dialog = new Dialog(GameActivity.this);
+        dialog.setTitle("New High Score!");
+        dialog.setContentView(R.layout.popup);
+
+        //cancel back operation
+        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        final EditText editText = (EditText)dialog.findViewById(R.id.name);
+        TextView s = (TextView)dialog.findViewById(R.id.score);
+        s.setText(score.toString());
+        Button submit = (Button)dialog.findViewById(R.id.submit);
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = editText.getText().toString();
+                if(name.isEmpty())
+                    name = "Anonymous";
+                name = name + " - " +score;
+                SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
+                scoresEditor.putString(Level, name);
+                scoresEditor.apply();
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        disableButtons(grid);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                dialog.show();
+            }
+        }, 3000);
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK))
+            onBackPressed();
         return true;
     }
 
@@ -258,6 +314,5 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         Intent intent = new Intent(GameActivity.this,StartPageActivity.class);
         startActivity(intent);
         finish();
-
     }
 }

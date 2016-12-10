@@ -6,7 +6,7 @@
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:supportsRtl="true"
+        android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity android:name=".UI.StartPageActivity"
             android:screenOrientation="portrait">
@@ -18,8 +18,6 @@
         <activity android:name=".UI.GameActivity"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".UI.EndGameActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".UI.NewHighScoreActivity"
             android:screenOrientation="portrait"></activity>
     </application>
 
