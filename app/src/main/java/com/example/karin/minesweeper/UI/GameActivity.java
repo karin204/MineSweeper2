@@ -24,12 +24,14 @@ import java.util.ArrayList;
 public class GameActivity extends AppCompatActivity implements MyButtonListener{
 
     public final static String DETAILS = "LEVEL";
+    public final static String LP = "LP";
     private GameLogic gameLogic;
     private int Rows, Cols, Mines;
     private String Level;
     private GridLayout grid;
     private TextView timerTextView;
     long startTime = 0;
+    private boolean endGame = false;
 
     //Timer
     Handler timerHandler = new Handler();
@@ -120,6 +122,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         if(gameLogic.checkWin())
         {
             timerHandler.removeCallbacks(timerRunnable);
+            endGame = true;
             Toast.makeText(this, "Well Done!!", Toast.LENGTH_SHORT).show();
             final Intent intent1 = new Intent(this,EndGameActivity.class);
             final CharSequence score = timerTextView.getText();
@@ -168,6 +171,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
 
     public void loose(MyButton myButton)
     {
+        timerHandler.removeCallbacks(timerRunnable);
         Toast.makeText(this, "You Lost!!", Toast.LENGTH_SHORT).show();
         int [] mines = new int[Mines];
         mines = gameLogic.getMinePos();
@@ -175,6 +179,10 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
             grid.getChildAt(mines[i]).setBackgroundResource(R.drawable.mine);
         myButton.setBackgroundResource(R.drawable.mine_clicked);
         disableButtons(grid);
+
+        SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
+        scoresEditor.putString(LP, Level);
+        scoresEditor.apply();
 
         final Intent intent = new Intent(this, EndGameActivity.class);
         intent.putExtra(DETAILS,"Lose");
@@ -232,6 +240,10 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
             if(oldScore.charAt(i) < score.charAt(newScorePos))
             {
                 final Intent intent2 = new Intent(this,EndGameActivity.class);
+                SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
+                scoresEditor.putString(LP, Level);
+                scoresEditor.apply();
+
                 intent2.putExtra(DETAILS,"win");
                 intent2.putExtra("TIMER",score);
 
@@ -279,6 +291,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
                 name = name + " - " +score;
                 SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
                 scoresEditor.putString(Level, name);
+                scoresEditor.putString(LP, Level);
                 scoresEditor.apply();
                 startActivity(intent);
                 finish();
@@ -303,8 +316,11 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(GameActivity.this,StartPageActivity.class);
-        startActivity(intent);
-        finish();
+        if (!endGame)
+        {
+            Intent intent = new Intent(GameActivity.this, StartPageActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }

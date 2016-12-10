@@ -63,6 +63,7 @@
                 android:textAlignment="center"
                 android:hint="Name"
                 android:textSize="24sp"
+                android:maxLength="10"
                 android:textStyle="normal|bold" />
 
         </TableRow>

@@ -15,6 +15,7 @@ import com.example.karin.minesweeper.R;
 
 public class StartPageActivity extends AppCompatActivity implements OnClickListener{
     public final static String DETAILS = "LEVEL";
+    public final static String LP = "Last played";
     private Button btnEasy;
     private Button btnMedium;
     private Button btnHard;
@@ -116,5 +117,15 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
             resMedium.setText(scores.getString("Medium",null));}
         if(scores.contains("Hard")) {
             resHard.setText(scores.getString("Hard",null));}
+        if(scores.contains("LP"))
+        {
+            String lp = scores.getString("LP",null);
+            if(lp.equals("Easy"))
+                btnEasy.setText(LP);
+            else if(lp.equals("Medium"))
+                btnMedium.setText(LP);
+            else
+                btnHard.setText(LP);
+        }
     }
 }

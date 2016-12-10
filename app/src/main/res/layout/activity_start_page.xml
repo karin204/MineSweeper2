@@ -31,29 +31,41 @@
             <Button
             android:id="@+id/btnMedium"
                 android:background="@drawable/medium"
+                android:gravity="bottom|center_horizontal"
+                android:textColor="@android:color/black"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/btnEasy"
-                android:layout_toEndOf="@+id/btnEasy" />
+                android:layout_toEndOf="@+id/btnEasy"
+                android:textStyle="normal|bold"
+                android:textSize="12sp" />
 
             <Button
             android:id="@+id/btnEasy"
                 android:background="@drawable/easy"
+                android:gravity="bottom|center_horizontal"
+                android:textColor="@android:color/black"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:textStyle="normal|bold"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btnHard"
                 android:background="@drawable/hard"
+                android:gravity="bottom|center_horizontal"
+                android:textColor="@android:color/black"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:textStyle="normal|bold"
+                android:textSize="12sp" />
 
         </RelativeLayout>
 
@@ -111,6 +123,7 @@
                     android:text="00:00"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:id="@+id/timeEasy"
                     android:textColor="@android:color/black"
                     android:textAlignment="center"
@@ -136,6 +149,7 @@
                     android:text="00:00"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:id="@+id/timeMed"
                     android:textColor="@android:color/black"
                     android:textAlignment="center"
@@ -162,6 +176,7 @@
                     android:text="00:00"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:id="@+id/timeHard"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
