@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MineSweeper</string>
+    <string name="ins">Click on box to reveal it value.\n
+                        Long click will place/remove a flag.\n
+                        Each numeric value represents the mines around it.\n
+                        The objective is to reveal all the boxes without steeping on a mine</string>
 </resources>

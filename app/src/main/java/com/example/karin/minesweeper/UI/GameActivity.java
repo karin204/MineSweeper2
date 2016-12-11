@@ -31,6 +31,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
     private GridLayout grid;
     private TextView timerTextView;
     long startTime = 0;
+    Button helpButton;
     private boolean endGame = false;
 
     //Timer
@@ -60,6 +61,17 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener{
         timerTextView = (TextView) findViewById(R.id.timerTextView);
         startTime = System.currentTimeMillis();
         timerHandler.postDelayed(timerRunnable, 0);
+
+        helpButton = (Button) findViewById(R.id.button);
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(GameActivity.this);
+                dialog.setContentView(R.layout.helpdialog);
+                dialog.show();
+
+            }
+        });
 
         Rows = getIntent().getIntExtra("ROWS",0);
         Cols = getIntent().getIntExtra("COLS",0);
