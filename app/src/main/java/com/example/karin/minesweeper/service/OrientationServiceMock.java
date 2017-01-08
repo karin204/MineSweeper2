@@ -1,4 +1,4 @@
-package com.example.karin.minesweeper.service;
+package com.example.karin.minesweeper.Service;
 
 import android.content.Intent;
 import android.os.IBinder;

@@ -1,46 +1,36 @@
 package com.example.karin.minesweeper.UI;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.graphics.Point;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.os.IBinder;
-import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,8 +38,8 @@ import android.widget.Toast;
 import com.example.karin.minesweeper.R;
 import com.example.karin.minesweeper.logic.GameLogic;
 import com.example.karin.minesweeper.logic.PlayerScore;
-import com.example.karin.minesweeper.service.OrientationService;
-import com.example.karin.minesweeper.service.OrientationServiceMock;
+import com.example.karin.minesweeper.Service.OrientationService;
+import com.example.karin.minesweeper.Service.OrientationServiceMock;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -161,41 +151,36 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         grid.setId(0);
         grid.setBackgroundColor(Color.DKGRAY);
         gameLogic = new GameLogic(rows,cols, mines);
-        for(int i=0; i< rows; i++)
+
+        tiles = new MyButton[rows][cols];
+
+        for (int i = 0; i < rows; i++)
         {
-            for(int j = 0; j< cols; j++)
+            for (int j = 0; j < cols; j++)
             {
-                MyButton btn = new MyButton(this,i,j);
-        gameLogic = new GameLogic(Rows, Cols, Mines);
-        tiles = new MyButton[Rows][Cols];
 
-                for (int i = 0; i < Rows; i++) {
-                    for (int j = 0; j < Cols; j++) {
+                tiles[i][j] = new MyButton(this, i, j);
+                int width = getWindowManager().getDefaultDisplay().getWidth();
+                int height = getWindowManager().getDefaultDisplay().getHeight();
+                android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width / (rows + 1), width / (rows + 1));
+                tiles[i][j].setLayoutParams(lp);
+                tiles[i][j].setListener(this);
+                tiles[i][j].setText(" ");
+                tiles[i][j].setTextSize(9);
+                tiles[i][j].setBackgroundResource(R.drawable.box);
 
-                        tiles[i][j] = new MyButton(this, i, j);
-                        int width = getWindowManager().getDefaultDisplay().getWidth();
-                        int height = getWindowManager().getDefaultDisplay().getHeight();
-                        android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width / (Rows + 1), width / (Rows + 1));
-                        tiles[i][j].setLayoutParams(lp);
-                        tiles[i][j].setListener(this);
-                        tiles[i][j].setText(" ");
-                        tiles[i][j].setTextSize(9);
-                        tiles[i][j].setBackgroundResource(R.drawable.box);
+                grid.addView(tiles[i][j]);
+            }
+        }
 
-                        grid.addView(tiles[i][j]);
-                    }
-                }
-
-                if (SHOULD_USE_MOCK) {
-                    bindService(new Intent(this, OrientationServiceMock.class), sensorsBoundServiceConnection, Context.BIND_AUTO_CREATE);
-                } else {
-                    bindService(new Intent(this, OrientationService.class), sensorsBoundServiceConnection, Context.BIND_AUTO_CREATE);
-                }
+        if (SHOULD_USE_MOCK) {
+            bindService(new Intent(this, OrientationServiceMock.class), sensorsBoundServiceConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            bindService(new Intent(this, OrientationService.class), sensorsBoundServiceConnection, Context.BIND_AUTO_CREATE);
+        }
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         startTime = 0;
-
-
     }
 
     @Override
@@ -291,8 +276,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         endGame = true;
         boolean finish = false;
 
-        for (int i = 0; i < Rows; i++)
-            for (int j = 0; j < Cols; j++)
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
                 tilesAnimation(tiles[i][j]);
 
         Toast.makeText(this, "You Lost!!", Toast.LENGTH_SHORT).show();

@@ -1,4 +1,4 @@
-package com.example.karin.minesweeper.service;
+package com.example.karin.minesweeper.Service;
 
 import android.app.Service;
 import android.content.Context;
