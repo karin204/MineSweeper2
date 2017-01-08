@@ -1,8 +1,11 @@
 package com.example.karin.minesweeper.UI;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,6 +14,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.karin.minesweeper.R;
+import com.example.karin.minesweeper.logic.PlayerScore;
+import com.example.karin.minesweeper.logic.PlayersDbHandler;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class StartPageActivity extends AppCompatActivity implements OnClickListener{
@@ -19,9 +27,24 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
     private Button btnEasy;
     private Button btnMedium;
     private Button btnHard;
+    private Button btnHs;
     private TextView resEasy;
     private TextView resMedium;
     private TextView resHard;
+    private boolean firstRun = true;
+    private HashMap<String,ArrayList<PlayerScore>> playerScores = new HashMap<>();
+    private PlayersDbHandler db = new PlayersDbHandler(this);
+
+    Handler sqlHandler = new Handler();
+    Runnable getSqlElementsThred = new Runnable() {
+        @Override
+        public void run() {
+            String [] keys = {"Easy", "Medium", "Hard"};
+            for (String key : keys)
+                playerScores.put(key, db.getAllScores(key));
+            sqlHandler.removeCallbacks(getSqlElementsThred);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -29,18 +52,27 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_start_page);
+        if(firstRun)
+        {
+            sqlHandler.postDelayed(getSqlElementsThred, 0);
+            firstRun = false;
+        }
+
+        else
+            playerScores = (HashMap<String, ArrayList<PlayerScore>>) getIntent().getSerializableExtra("PS");
 
         btnEasy = (Button)findViewById(R.id.btnEasy);
         btnMedium = (Button)findViewById(R.id.btnMedium);
         btnHard = (Button)findViewById(R.id.btnHard);
+        btnHs = (Button)findViewById(R.id.hs);
         resEasy = (TextView)findViewById(R.id.timeEasy);
         resMedium = (TextView)findViewById(R.id.timeMed);
         resHard = (TextView)findViewById(R.id.timeHard);
         btnEasy.setOnClickListener(this);
         btnMedium.setOnClickListener(this);
         btnHard.setOnClickListener(this);
+        btnHs.setOnClickListener(this);
         loadData();
-
     }
 
     @Override
@@ -57,6 +89,8 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
                 intent.putExtra("COLS", 10);
                 intent.putExtra("ROWS", 10);
                 intent.putExtra("MINES", 5);
+                intent.putExtra("PS", playerScores);
+                //intent.putExtra("DB", db);
                 intent.putExtra(DETAILS,"Easy");
                 startActivity(intent);
                 finish();
@@ -69,6 +103,8 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
                 intent.putExtra("COLS", 10);
                 intent.putExtra("ROWS", 10);
                 intent.putExtra("MINES", 10);
+                intent.putExtra("PS", playerScores);
+                //intent.putExtra("DB", db);
                 intent.putExtra(DETAILS,"Medium");
                 startActivity(intent);
                 finish();
@@ -81,12 +117,27 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
                 intent.putExtra("COLS", 5);
                 intent.putExtra("ROWS", 5);
                 intent.putExtra("MINES", 10);
+                intent.putExtra("PS", playerScores);
+                //intent.putExtra("DB", db);
                 intent.putExtra(DETAILS,"Hard");
                 startActivity(intent);
                 finish();
                 break;
             }
 
+            case R.id.hs:
+            {
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                HighScoresFragment f = new HighScoresFragment();
+                Bundle args = new Bundle();
+                args.putSerializable("hash", playerScores);
+                f.setArguments(args);
+                fragmentTransaction.replace(R.id.activity_start_page, f);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+                break;
+            }
         }
     }
 
@@ -97,16 +148,20 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
         return true;
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            this.finish();
+        } else {
+            getFragmentManager().popBackStack();
+        }
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
         System.exit(0);
-
-    }
+    }*/
 
     public void loadData()
     {

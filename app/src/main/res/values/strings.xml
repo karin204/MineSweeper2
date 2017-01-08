@@ -4,4 +4,7 @@
                         Long click will place/remove a flag.\n
                         Each numeric value represents the mines around it.\n
                         The objective is to reveal all the boxes without steeping on a mine</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
