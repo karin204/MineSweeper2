@@ -443,6 +443,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                 if(arr.size() > 9)
                     arr.remove(arr.size()-1);
                 arr.add(p);
+                dbs.setIsChanged(true);
                 startActivity(intent);
                 finish();
             }

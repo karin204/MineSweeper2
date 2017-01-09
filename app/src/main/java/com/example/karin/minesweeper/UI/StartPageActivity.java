@@ -149,4 +149,12 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
                 btnHard.setText(LP);
         }
     }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        if(dbs.isChanged())
+            dbs.updateDB();
+    }
 }

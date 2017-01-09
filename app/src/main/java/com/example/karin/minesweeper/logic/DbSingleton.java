@@ -17,10 +17,11 @@ public class DbSingleton
     private static ArrayList<PlayerScore> easy;
     private static ArrayList<PlayerScore> medium;
     private static ArrayList<PlayerScore> hard;
+    private  static boolean isChanged = false;
 
     private DbSingleton()
     {
-        scoresMap.put("Easy", new ArrayList<PlayerScore>());
+        scoresMap.put("Easy", db.getAllScores("Easy"));
         scoresMap.put("Medium", db.getAllScores("Medium"));
         scoresMap.put("Hard", db.getAllScores("Hard"));
     }
@@ -36,5 +37,18 @@ public class DbSingleton
 
     public static synchronized ArrayList<PlayerScore> getPlayerScoresByLevel(String level) {
         return scoresMap.get(level);
+    }
+
+    public static void updateDB()
+    {
+        db.insertHighScore(scoresMap);
+    }
+
+    public static boolean isChanged() {
+        return isChanged;
+    }
+
+    public static void setIsChanged(boolean isChanged) {
+        DbSingleton.isChanged = isChanged;
     }
 }

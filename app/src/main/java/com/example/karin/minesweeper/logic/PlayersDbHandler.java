@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Avi on 07/01/2017.
@@ -49,16 +50,25 @@ public class PlayersDbHandler extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public void insertHighScore(String playerName, String playerTime, String playerLevel, Double playerAltitude, Double playerLongitude)
+    public void insertHighScore(HashMap<String, ArrayList<PlayerScore>> map)
     {
         SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("PlayerName", playerName);
-        values.put("PlayerTime", playerTime);
-        values.put("PlayerLevel", playerLevel);
-        values.put("PlayerAltitude", playerAltitude);
-        values.put("PlayerLongitude", playerLongitude);
-        database.insert("HighScores", null, values);
+        database.execSQL("delete from HighScores");
+
+        for (String key: map.keySet())
+        {
+            for (PlayerScore player: map.get(key))
+            {
+                ContentValues values = new ContentValues();
+                values.put("PlayerName", player.getPlayerName());
+                values.put("PlayerTime", player.getPlayerTime());
+                values.put("PlayerLevel", player.getPlayerLevel());
+                values.put("PlayerAltitude", player.getPlayerAltitude());
+                values.put("PlayerLongitude", player.getPlayerLongitude());
+                database.insert("HighScores", null, values);
+            }
+        }
+
         database.close();
     }
 
@@ -88,7 +98,7 @@ public class PlayersDbHandler extends SQLiteOpenHelper{
 
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor  =  db.rawQuery( "select * from HighScores", null );
+        Cursor cursor  =  db.rawQuery( "select * from HighScores where PlayerLevel = " + '"'+ playerLevel + '"', null );
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
