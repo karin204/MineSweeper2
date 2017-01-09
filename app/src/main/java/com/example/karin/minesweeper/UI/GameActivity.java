@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.karin.minesweeper.R;
+import com.example.karin.minesweeper.logic.DbSingleton;
 import com.example.karin.minesweeper.logic.GameLogic;
 import com.example.karin.minesweeper.logic.PlayerScore;
 import com.example.karin.minesweeper.Service.OrientationService;
@@ -43,7 +44,6 @@ import com.example.karin.minesweeper.Service.OrientationServiceMock;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements MyButtonListener, LocationListener {
@@ -52,18 +52,17 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
     public final static String LP = "LP";
     private GameLogic gameLogic;
     private int rows, cols, mines;
-    private String Level;
+    private String level;
     private GridLayout grid;
     private TextView timerTextView;
     private long startTime = 0;
     private Button helpButton;
     private Button highScoresButton;
     private boolean endGame = false;
-    private HashMap<String,ArrayList<PlayerScore>> playerScores;
-    //private PlayersDbHandler db;
     private LocationManager locationManager;
     private Location location;
     private MyButton[][] tiles;
+    private DbSingleton dbs;
 
     private final String TAG = GameActivity.class.getSimpleName();
     private boolean isServiceBound = false;
@@ -114,10 +113,12 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         getSupportActionBar().hide();
         setContentView(R.layout.activity_game);
 
+        dbs = DbSingleton.getInstance(getApplicationContext());
+
         //Timer section
         timerTextView = (TextView) findViewById(R.id.timerTextView);
-        startTime = System.currentTimeMillis();
-        timerHandler.postDelayed(timerRunnable, 0);
+
+        //timerHandler.postDelayed(timerRunnable, 0);
 
         helpButton = (Button) findViewById(R.id.button);
         helpButton.setOnClickListener(new View.OnClickListener() {
@@ -141,9 +142,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         rows = getIntent().getIntExtra("ROWS",0);
         cols = getIntent().getIntExtra("COLS",0);
         mines = getIntent().getIntExtra("MINES",0);
-        Level = getIntent().getStringExtra(DETAILS);
-        playerScores = (HashMap<String, ArrayList<PlayerScore>>) getIntent().getSerializableExtra("PS");
-        //db = (PlayersDbHandler) getIntent().getSerializableExtra("DB");
+        level = getIntent().getStringExtra(DETAILS);
 
         grid = (GridLayout)findViewById(R.id.board);
         grid.setColumnCount(cols);
@@ -229,13 +228,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             endGame = true;
             Toast.makeText(this, "Well Done!!", Toast.LENGTH_SHORT).show();
             final CharSequence score = timerTextView.getText();
-            //SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
-            //SharedPreferences scores = getSharedPreferences("scores", MODE_PRIVATE);
-
-            //there is an high score -> need to check if the new score is better
-
             checkHigherScore(score);
-
         }
     }
 
@@ -289,7 +282,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         disableButtons(grid);
 
         SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
-        scoresEditor.putString(LP, Level);
+        scoresEditor.putString(LP, level);
         scoresEditor.apply();
 
         final Intent intent = new Intent(this, EndGameActivity.class);
@@ -345,15 +338,12 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         //tiles disappear
         currentTile.animate().setDuration(150).setStartDelay(1000).scaleX(0f).scaleY(0f).alpha(0f).start();
 
-
         AnimatorSet animationSet1 = new AnimatorSet();
         AnimatorSet animationSet2 = new AnimatorSet();
         animationSet1.playTogether(flyOutY, flyOutX);
         animationSet2.playSequentially(animator, animationSet1);
         animationSet2.start();
-
     }
-
 
     public void noMineClick(MyButton myButton, int curRow, int curCol)
     {
@@ -389,7 +379,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
 
     public void checkHigherScore(CharSequence score)
     {
-        ArrayList<PlayerScore> arr = playerScores.get(Level);
+        ArrayList<PlayerScore> arr = dbs.getPlayerScoresByLevel(level);
         if(arr.size()<10)
             newHighScore(score);
         else
@@ -445,15 +435,14 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                 if(name.isEmpty())
                     name = "Anonymous";
                 if(location != null)
-                    p = new PlayerScore(name, (String) score, Level, location.getAltitude(), location.getLongitude());
+                    p = new PlayerScore(name, (String) score, level, location.getAltitude(), location.getLongitude());
                 else
-                    p = new PlayerScore(name, (String) score, Level, 0.0, 0.0);
+                    p = new PlayerScore(name, (String) score, level, 0.0, 0.0);
 
-                ArrayList<PlayerScore> arr = playerScores.get(Level);
-                if(arr.size()-1 > 0)
+                ArrayList<PlayerScore> arr = dbs.getPlayerScoresByLevel(level);
+                if(arr.size() > 9)
                     arr.remove(arr.size()-1);
                 arr.add(p);
-                intent.putExtra("PS", playerScores);
                 startActivity(intent);
                 finish();
             }
@@ -480,7 +469,6 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         if (!endGame)
         {
             Intent intent = new Intent(GameActivity.this, StartPageActivity.class);
-            intent.putExtra("PS", playerScores);
             startActivity(intent);
             finish();
         }

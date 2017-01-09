@@ -15,13 +15,21 @@ import java.util.ArrayList;
 
 public class PlayersDbHandler extends SQLiteOpenHelper{
     private static final String LOGCAT = null;
+    private static PlayersDbHandler pDbInstance;
 
-    public PlayersDbHandler(Context applicationcontext)
+    public static synchronized PlayersDbHandler getInstance(Context context) {
+
+        if (pDbInstance == null) {
+            pDbInstance = new PlayersDbHandler(context.getApplicationContext());
+        }
+        return pDbInstance;
+    }
+
+    private PlayersDbHandler(Context applicationcontext)
     {
         super(applicationcontext, "scoresDB.db", null, 1);
         Log.d(LOGCAT,"Created");
     }
-
 
     @Override
     public void onCreate(SQLiteDatabase db)

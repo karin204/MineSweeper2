@@ -11,10 +11,11 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.example.karin.minesweeper.R;
+import com.example.karin.minesweeper.logic.DbSingleton;
 import com.example.karin.minesweeper.logic.PlayerScore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 
 /**
  * Created by Avi on 07/01/2017.
@@ -24,14 +25,14 @@ public class HighScoresFragment extends Fragment implements View.OnClickListener
     private TableLayout table;
     private Button [] button = new Button[3];
     private Button map;
-    private HashMap<String, ArrayList<PlayerScore>> playerScores;
+    private DbSingleton dbs;
+    ArrayList<PlayerScore> arr;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_highscores, container, false);
-        Bundle args = getArguments();
-        playerScores = (HashMap<String, ArrayList<PlayerScore>>) args.get("hash");
         table = (TableLayout) v.findViewById(R.id.tableScores);
-
+        dbs = DbSingleton.getInstance(getActivity().getApplicationContext());
         button[0] = (Button) v.findViewById(R.id.Easy);
         button[0].setOnClickListener(this);
         button[0].setEnabled(false);
@@ -85,21 +86,23 @@ public class HighScoresFragment extends Fragment implements View.OnClickListener
                 button[i].setEnabled(true);
         }
 
-        ArrayList<PlayerScore> arr = playerScores.get(level); //starts with the easy score table
+        arr = dbs.getPlayerScoresByLevel(level);
+        Collections.sort(arr);
+
+        table.removeAllViews();
         for (PlayerScore p : arr)
         {
-            table.removeAllViews();
             TableRow tr = new TableRow(getActivity());
             TextView tv1 = new TextView(getActivity());
             tv1.setText(p.getPlayerName());
             tv1.setTextSize(20);
-            tv1.setPadding(5, 5, 5, 5);
+            tv1.setPadding(50, 50, 50, 50);
             tr.addView(tv1);
 
             TextView tv2 = new TextView(getActivity());
             tv2.setText(p.getPlayerTime());
             tv2.setTextSize(20);
-            tv2.setPadding(5, 5, 5, 5);
+            tv2.setPadding(50, 50, 50, 50);
             tr.addView(tv2);
 
             table.addView(tr);
