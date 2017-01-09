@@ -1,5 +1,8 @@
 package com.example.karin.minesweeper.logic;
 
+import android.util.Log;
+
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -13,7 +16,7 @@ public class GameLogic
     private int mines;
     private int counter;
     private int[][] gameBoard;
-    private int [] minePos;
+    private ArrayList<Integer> minePos;
 
     public GameLogic(int rows, int cols,int mines)
     {
@@ -22,9 +25,10 @@ public class GameLogic
         this.mines = mines;
         this.counter = rows*cols-mines;
         this.gameBoard = new int[rows][cols];
-        this.minePos = new int[mines];
+        this.minePos = new ArrayList<>();
         this.buildBoard();
     }
+
 
     public void buildBoard()
     {
@@ -38,7 +42,7 @@ public class GameLogic
             else
             {
                 gameBoard[x][y] = -1;
-                minePos[idx] = x*this.rows+y;
+                minePos.add(x*this.rows+y);
             }
         }
         for(int i=0 ;i<rows; i++)
@@ -47,6 +51,29 @@ public class GameLogic
                     gameBoard[i][j]= CalculateNeighbours(i,j);
 
     }
+
+    public void addMine()
+    {
+        Random rand = new Random();
+        int x = rand.nextInt(rows);
+        int y = rand.nextInt(cols);
+
+        while(gameBoard[x][y] == -1) {
+            x = rand.nextInt(rows);
+            y = rand.nextInt(cols);
+        }
+        gameBoard[x][y] = -1;
+        minePos.add(x*this.rows+y);
+        this.mines++;
+
+        for(int i=0 ;i<rows; i++)
+            for(int j=0;j<cols; j++)
+                if(gameBoard[i][j] != -1)
+                    gameBoard[i][j]= CalculateNeighbours(i,j);
+
+
+    }
+
 
     public boolean CheckMine(int x, int y)
     {
@@ -119,6 +146,9 @@ public class GameLogic
     public int getCols()
     {return this.cols;}
 
-    public int[] getMinePos()
+    public int getMinesCount()
+    {return this.mines;}
+
+    public ArrayList<Integer> getMinePos()
     {   return minePos; }
 }

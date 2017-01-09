@@ -36,17 +36,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.karin.minesweeper.R;
+import com.example.karin.minesweeper.Service.OrientationService;
 import com.example.karin.minesweeper.logic.DbSingleton;
 import com.example.karin.minesweeper.logic.GameLogic;
 import com.example.karin.minesweeper.logic.PlayerScore;
-import com.example.karin.minesweeper.Service.OrientationService;
-import com.example.karin.minesweeper.Service.OrientationServiceMock;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity implements MyButtonListener, LocationListener {
+public class GameActivity extends AppCompatActivity implements MyButtonListener, LocationListener,OrientationService.MyServiceListener {
 
     public final static String DETAILS = "LEVEL";
     public final static String LP = "LP";
@@ -65,9 +65,27 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
     private DbSingleton dbs;
 
     private final String TAG = GameActivity.class.getSimpleName();
-    private boolean isServiceBound = false;
-    public OrientationService.OrientationServiceBinder binder;
-    private static final boolean SHOULD_USE_MOCK = false;
+    private OrientationService myService;
+    boolean ifFirst = true;
+    float[] firstCheck = new float[3];
+    long lastUpdated = 0;
+    private TextView txtNumMine;
+
+    ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
+            if(serviceBinder instanceof OrientationService.ServiceBinder) {
+                setService(((OrientationService.ServiceBinder) serviceBinder).getService());
+            }
+            Log.d(TAG,"onServiceConnected: "+ name);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            setService(null);
+            Log.d(TAG,"onServiceDisconnected: "+ name);
+        }
+    };
 
 
     //Timer
@@ -150,7 +168,9 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         grid.setId(0);
         grid.setBackgroundColor(Color.DKGRAY);
         gameLogic = new GameLogic(rows,cols, mines);
-
+        txtNumMine = (TextView)findViewById(R.id.txtMines);
+        int n = gameLogic.getMinesCount();
+        txtNumMine.setText(String.valueOf(n));
         tiles = new MyButton[rows][cols];
 
         for (int i = 0; i < rows; i++)
@@ -172,28 +192,27 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             }
         }
 
-        if (SHOULD_USE_MOCK) {
-            bindService(new Intent(this, OrientationServiceMock.class), sensorsBoundServiceConnection, Context.BIND_AUTO_CREATE);
-        } else {
-            bindService(new Intent(this, OrientationService.class), sensorsBoundServiceConnection, Context.BIND_AUTO_CREATE);
-        }
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         startTime = 0;
+
+        boolean bindingSucceeded = bindService(new Intent(this, OrientationService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+        Log.d(TAG, "onCreate: " + (bindingSucceeded ? "the binding succeeded..." : "the binding failed!"));
     }
+
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: activity destroyed");
-        unbindService(sensorsBoundServiceConnection);
+        unbindService(serviceConnection);
     }
-
 
     @Override
     public void onPause() {
         super.onPause();
         timerHandler.removeCallbacks(timerRunnable);
+        if(myService != null)
+            myService.stopListening();
     }
 
     @Override
@@ -216,9 +235,11 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         int curCol = myButton.getCol();
 
         //step on mine
-        if(myButton.isClickable() && gameLogic.CheckMine(curRow,curCol))
+        if(myButton.isClickable() && gameLogic.CheckMine(curRow,curCol)) {
             loose(myButton);
-            //step on no mine
+            myService.stopListening();
+
+        }   //step on no mine
         else if (myButton.isEnabled() && myButton.isClickable())
             noMineClick(myButton, curRow, curCol);
 
@@ -274,10 +295,11 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                 tilesAnimation(tiles[i][j]);
 
         Toast.makeText(this, "You Lost!!", Toast.LENGTH_SHORT).show();
-        int [] mines = new int[this.mines];
+        ArrayList<Integer> mines = new ArrayList<>();
         mines = gameLogic.getMinePos();
+        this.mines = gameLogic.getMinesCount();
         for(int i = 0; i< this.mines; i++)
-            grid.getChildAt(mines[i]).setBackgroundResource(R.drawable.mine);
+            grid.getChildAt(mines.get(i)).setBackgroundResource(R.drawable.mine);
         myButton.setBackgroundResource(R.drawable.mine_clicked);
         disableButtons(grid);
 
@@ -336,7 +358,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         });
 
         //tiles disappear
-        currentTile.animate().setDuration(150).setStartDelay(1000).scaleX(0f).scaleY(0f).alpha(0f).start();
+       // currentTile.animate().setDuration(150).setStartDelay(1000).scaleX(0f).scaleY(0f).alpha(0f).start();
 
         AnimatorSet animationSet1 = new AnimatorSet();
         AnimatorSet animationSet2 = new AnimatorSet();
@@ -517,29 +539,57 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         alert.show();
     }
 
-
-    private ServiceConnection sensorsBoundServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            binder = (OrientationService.OrientationServiceBinder) service;
-            isServiceBound = true;
+    @Override
+    public void onSensorEvent(float[] values) {
+        if(ifFirst) {
+            Log.d(TAG, "OnSensorEventFirstTime: "+ Arrays.toString(values));
+            firstCheck[0] = values[0];
+            firstCheck[1] = values[1];
+            firstCheck[2] = values[2];
+            ifFirst = false;
         }
+        else
+        {
+            if((Math.abs(values[0] - firstCheck[0]) > 0.6 * Math.abs(values[0])) || (Math.abs(values[1] - firstCheck[1]) > 0.6*Math.abs(values[1])) || (Math.abs(values[2]-firstCheck[2]) > 0.6*Math.abs(values[2]))) {
+                Log.d(TAG, "OnSensorEventFirst: " + Arrays.toString(firstCheck));
+                Log.d(TAG, "OnSensorEvent: " + Arrays.toString(values));
 
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            isServiceBound = false;
-        }
-
-
-        void notifyBoundService(String massageFromActivity) {
-            if (isServiceBound) {
-                binder.notifyService(massageFromActivity);
+                long curTime = System.currentTimeMillis();
+                if(curTime - lastUpdated > 5000) {
+                    Log.d(TAG, "5 sec passed time;" + curTime);
+                    lastUpdated = curTime;
+                    if (gameLogic.getMinesCount()<rows*cols) {
+                        gameLogic.addMine();
+                        txtNumMine.setText(String.valueOf(gameLogic.getMinesCount()));
+                    }
+                    else {
+                        txtNumMine.setText("Maximum mines in board, you lose!");
+                        MyButton lastMine = new MyButton(this,rows-1,cols-1);
+                        loose(lastMine);
+                    }
+                }
             }
+
         }
 
-        ;
+    }
 
-    };
+
+    public void setService(OrientationService service)
+    {
+        if(service != null)
+        {
+            this.myService = service;
+            service.setListener(this);
+            service.startListening();
+        }
+        else
+        {
+            if(this.myService != null)
+                this.myService.setListener(null);
+            this.myService = null;
+        }
+    }
 }
+
 

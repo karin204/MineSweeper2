@@ -12,6 +12,11 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAGsjJNe7MefoIkMHq_--35sOPZzIb5I-E"/>
+
+        <service android:name=".Service.OrientationService" />
+
+
+
         <activity android:name=".UI.StartPageActivity"
             android:screenOrientation="portrait">
             <intent-filter>

@@ -21,95 +21,57 @@ import java.util.List;
 public class OrientationService extends Service implements SensorEventListener
 {
     private static final String _TAG = OrientationService.class.getSimpleName();
-    protected final IBinder orientationServiceBinder = new OrientationServiceBinder();
-    protected float values;
+    private MyServiceListener listener;
     private SensorManager sensorManager;
-    public static final String SENSOR_SERVICE_BROADCAST_ACTION = "SENSOR_SERVICE_BROADCAST_ACTION";
-    public static final String SENSOR_SERVICE_VALUES_KEY = "SENSOR_SERVICE_VALUES_KEY";
+    ServiceBinder serviceBinder;
 
+    public interface MyServiceListener
+    {
+        void onSensorEvent(float[] values);
+    }
+
+    public class ServiceBinder extends Binder
+    {
+        public OrientationService getService()
+        {
+            return OrientationService.this;
+        }
+    }
+
+    public void setListener(MyServiceListener listener)
+    {
+        this.listener = listener;
+    }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent)
     {
-        sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ALL);
-        Log.v(getTag(),"Available seneors:"+ sensorList);
-        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        if(sensor == null && sensorList.size() > 0)
-        {
-            sensor = sensorList.get(0);
-        }
-        sensorManager.registerListener(this,sensor,SensorManager.SENSOR_DELAY_NORMAL);
-        return orientationServiceBinder;
-
+        serviceBinder = new ServiceBinder();
+        return serviceBinder;
     }
 
-    public boolean onUnbind(Intent intent)
+    public void startListening()
     {
-        if (sensorManager != null) {
-            sensorManager.unregisterListener(this);
-            sensorManager = null;
-        }
+        sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(this,sensor,SensorManager.SENSOR_DELAY_NORMAL);
+    }
 
-        return super.onUnbind(intent);
+    public void stopListening()
+    {
+        sensorManager.unregisterListener(this);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event)
     {
-        float[] values = new float[event.values.length];
-        for (int i =0; i < event.values.length; i++) {
-            values[i] = event.values[i];
-        }
-        notifyEvaluation(values);
+        if(listener != null)
+            listener.onSensorEvent(event.values);
     }
 
-
-    //not implemented
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
-
-
-    public OrientationService getOrientation()
-    {
-        return this;
-    }
-
-    public String getTag() {
-        return _TAG;
-    }
-
-    public float[] evaluate()
-    {
-        return new float[]{0.1f,0.1f,0.1f};
-    }
-
-    protected void notifyEvaluation(float[] values)
-    {
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(SENSOR_SERVICE_BROADCAST_ACTION);
-        broadcastIntent.putExtra(SENSOR_SERVICE_VALUES_KEY, values);
-        sendBroadcast(broadcastIntent);
-    }
-
-    public float getValues()
-    {
-        return values;
-    }
-
-
-
-    public class OrientationServiceBinder extends Binder {
-        public OrientationService getService() {
-            return OrientationService.this.getOrientation();
-        }
-
-        public void notifyService(String message) {
-            Log.v(getTag(), OrientationService.class.getSimpleName() + "new message = " + message);
-        }
-    }
-
 }
