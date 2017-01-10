@@ -1,6 +1,8 @@
 package com.example.karin.minesweeper.UI;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -17,6 +19,7 @@ import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -27,10 +30,13 @@ import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +46,8 @@ import com.example.karin.minesweeper.Service.OrientationService;
 import com.example.karin.minesweeper.logic.DbSingleton;
 import com.example.karin.minesweeper.logic.GameLogic;
 import com.example.karin.minesweeper.logic.PlayerScore;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,6 +79,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
     long lastUpdated = 0;
     private TextView txtNumMine;
 
+    int countAnimation = 0;
+    boolean show = false;
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
@@ -247,7 +257,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         {
             timerHandler.removeCallbacks(timerRunnable);
             endGame = true;
-            Toast.makeText(this, "Well Done!!", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "Well Done!!", Toast.LENGTH_SHORT).show();
             final CharSequence score = timerTextView.getText();
             checkHigherScore(score);
         }
@@ -326,23 +336,16 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int otherSide;
+        int rndNum;
 
-        otherSide = random.nextBoolean() ? 1 : -1;
-        ObjectAnimator flyOutX = ObjectAnimator.ofFloat(currentTile, "x", currentTile.getX(), otherSide * size.x);
+        rndNum = random.nextBoolean() ? 1 : -1;
+        ObjectAnimator flyOutX = ObjectAnimator.ofFloat(currentTile, "x", currentTile.getX(), rndNum * size.x);
         flyOutX.setDuration(duration);
         flyOutX.setInterpolator(new DecelerateInterpolator());
 
-        otherSide = random.nextBoolean() ? 1 : -1;
         ObjectAnimator flyOutY = ObjectAnimator.ofFloat(currentTile, "y", currentTile.getY(), size.y);
         flyOutY.setDuration(duration);
         flyOutY.setInterpolator(new DecelerateInterpolator());
-
-        otherSide = random.nextBoolean() ? 1 : -1;
-        ObjectAnimator rotate = ObjectAnimator.ofFloat(currentTile, "rotation", otherSide == 1 ? 0f : 360f, otherSide == 1 ? 360f : 0f);
-        rotate.setDuration(duration);
-        rotate.setInterpolator(new DecelerateInterpolator());
-
 
         ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f).setDuration(150);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -358,7 +361,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         });
 
         //tiles disappear
-       // currentTile.animate().setDuration(150).setStartDelay(1000).scaleX(0f).scaleY(0f).alpha(0f).start();
+        currentTile.animate().setDuration(150).setStartDelay(1000).scaleX(0f).scaleY(0f).alpha(0f).start();
 
         AnimatorSet animationSet1 = new AnimatorSet();
         AnimatorSet animationSet2 = new AnimatorSet();
@@ -434,6 +437,48 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         }
     }
 
+    public void winAnimation(final ImageView jumpImg)
+    {
+        long duration = 400;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        final MediaPlayer jump = MediaPlayer.create(this, R.raw.jump);
+        ObjectAnimator upAnim = ObjectAnimator.ofFloat(jumpImg, "y", 580, 220);
+        upAnim.setDuration(duration);
+        upAnim.setInterpolator(new LinearInterpolator());
+        ObjectAnimator downAnim = ObjectAnimator.ofFloat(jumpImg, "y",220, 580);
+        downAnim.setDuration(duration);
+        downAnim.setInterpolator(new LinearInterpolator());
+
+
+
+        final AnimatorSet animationSet1 = new AnimatorSet();
+        animationSet1.playSequentially(upAnim,downAnim);
+        animationSet1.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if(countAnimation<10)
+                {
+                    countAnimation++;
+                    animationSet1.start();
+                    jump.start();
+                }
+                else {
+                    jumpImg.setY(580);
+                    show = true;
+                }
+            }
+        });
+
+        animationSet1.start();
+        jump.start();
+    }
+
+
+
+
     public void newHighScore(final CharSequence score)
     {
         final Intent intent = new Intent(this,StartPageActivity.class);
@@ -441,14 +486,35 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         dialog.setTitle("New High Score!");
         dialog.setContentView(R.layout.popup);
 
+
         //cancel back operation and outside click
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
 
+        final ImageView jumpImg = (ImageView)dialog.findViewById(R.id.jump);
+        winAnimation(jumpImg);
+
         final EditText editText = (EditText)dialog.findViewById(R.id.name);
-        TextView s = (TextView)dialog.findViewById(R.id.score);
+        final TextView txtRes = (TextView)dialog.findViewById(R.id.level);
+        final TextView txtEnter = (TextView)dialog.findViewById(R.id.easy);
+        final TextView s = (TextView)dialog.findViewById(R.id.score);
+        final Button submit = (Button)dialog.findViewById(R.id.submit);
+
+        Handler handler1 = new Handler();
+        handler1.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                editText.setVisibility(View.VISIBLE);
+                txtRes.setVisibility(View.VISIBLE);
+                txtEnter.setVisibility(View.VISIBLE);
+                s.setVisibility(View.VISIBLE);
+                submit.setVisibility(View.VISIBLE);
+
+            }
+        }, 9000);
+
+
         s.setText(score.toString());
-        Button submit = (Button)dialog.findViewById(R.id.submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -473,12 +539,13 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
 
         disableButtons(grid);
         Handler handler = new Handler();
+        //delay necessary?
         handler.postDelayed(new Runnable(){
             @Override
             public void run(){
                 dialog.show();
             }
-        }, 3000);
+        }, 0);
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
