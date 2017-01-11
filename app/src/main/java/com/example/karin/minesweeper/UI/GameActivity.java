@@ -30,7 +30,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
@@ -47,12 +46,13 @@ import com.example.karin.minesweeper.logic.DbSingleton;
 import com.example.karin.minesweeper.logic.GameLogic;
 import com.example.karin.minesweeper.logic.PlayerScore;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Random;
+
+import pl.droidsonroids.gif.GifImageView;
 
 public class GameActivity extends AppCompatActivity implements MyButtonListener, LocationListener,OrientationService.MyServiceListener {
 
@@ -145,9 +145,6 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
 
         //Timer section
         timerTextView = (TextView) findViewById(R.id.timerTextView);
-
-        //timerHandler.postDelayed(timerRunnable, 0);
-
         helpButton = (Button) findViewById(R.id.button);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,7 +173,6 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         grid.setColumnCount(cols);
         grid.setRowCount(rows);
         grid.setId(0);
-        grid.setBackgroundColor(Color.DKGRAY);
         gameLogic = new GameLogic(rows,cols, mines);
         txtNumMine = (TextView)findViewById(R.id.txtMines);
         int n = gameLogic.getMinesCount();
@@ -189,6 +185,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             {
 
                 tiles[i][j] = new MyButton(this, i, j);
+                tiles[i][j].setBackgroundColor(Color.TRANSPARENT);
                 int width = getWindowManager().getDefaultDisplay().getWidth();
                 int height = getWindowManager().getDefaultDisplay().getHeight();
                 android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width / (rows + 1), width / (rows + 1));
@@ -368,6 +365,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         animationSet1.playTogether(flyOutY, flyOutX);
         animationSet2.playSequentially(animator, animationSet1);
         animationSet2.start();
+
     }
 
     public void noMineClick(MyButton myButton, int curRow, int curCol)
@@ -617,7 +615,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         }
         else
         {
-            if((Math.abs(values[0] - firstCheck[0]) > 0.6 * Math.abs(values[0])) || (Math.abs(values[1] - firstCheck[1]) > 0.6*Math.abs(values[1])) || (Math.abs(values[2]-firstCheck[2]) > 0.6*Math.abs(values[2]))) {
+            if((Math.abs(values[0] - firstCheck[0]) > 0.6 * Math.abs(values[0])) && (Math.abs(values[1] - firstCheck[1]) > 0.6*Math.abs(values[1])) && (Math.abs(values[2]-firstCheck[2]) > 0.6*Math.abs(values[2]))) {
                 Log.d(TAG, "OnSensorEventFirst: " + Arrays.toString(firstCheck));
                 Log.d(TAG, "OnSensorEvent: " + Arrays.toString(values));
 

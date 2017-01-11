@@ -39,13 +39,15 @@
         </TableRow>
     </TableLayout>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:srcCompat="@drawable/laughing"
-        android:id="@+id/imageView"
-        android:visibility="visible"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+    <pl.droidsonroids.gif.GifImageView
+        android:src="@drawable/minionsgif"
+        android:id="@+id/ivlose"
+        android:background="@drawable/loseback"
+        android:layout_width="1000dp"
+        android:layout_height="3000dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:adjustViewBounds="true" />
+
 
 </RelativeLayout>

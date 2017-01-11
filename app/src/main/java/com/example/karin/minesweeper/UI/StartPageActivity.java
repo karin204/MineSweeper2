@@ -4,16 +4,21 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.karin.minesweeper.R;
 import com.example.karin.minesweeper.logic.DbSingleton;
+
+import pl.droidsonroids.gif.GifImageView;
 
 
 public class StartPageActivity extends AppCompatActivity implements OnClickListener{
@@ -27,6 +32,7 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
     private TextView resMedium;
     private TextView resHard;
     private DbSingleton dbs;
+    private GifImageView start;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -34,6 +40,30 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_start_page);
+
+        start = (GifImageView)findViewById(R.id.ivopen);
+        start.setVisibility(View.VISIBLE);
+        MediaPlayer mp = MediaPlayer.create(this, R.raw.hello);
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+
+                Display display = getWindowManager().getDefaultDisplay();
+                float width = display.getWidth();
+                TranslateAnimation animation = new TranslateAnimation(0, width - 50, 0, 0); // new TranslateAnimation(xFrom,xTo, yFrom,yTo)
+                animation.setDuration(1000); // animation duration
+                animation.setRepeatCount(0); // animation repeat count
+                animation.setRepeatMode(1); // repeat animation (left to right, right to
+
+
+                start.startAnimation(animation);
+                start.setVisibility(View.INVISIBLE);;
+            }
+
+        });
+
+        mp.start();
 
         dbs = DbSingleton.getInstance(this);
         btnEasy = (Button)findViewById(R.id.btnEasy);

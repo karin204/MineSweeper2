@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -16,9 +17,11 @@ import android.media.Image;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +33,8 @@ import android.widget.TextView;
 
 import com.example.karin.minesweeper.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+
+import pl.droidsonroids.gif.GifImageView;
 
 public class EndGameActivity extends AppCompatActivity {
 
@@ -52,6 +53,8 @@ public class EndGameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
         setContentView(R.layout.activity_end_game);
         Intent intent = getIntent();
         startIntent = new Intent(EndGameActivity.this, StartPageActivity.class);
@@ -63,7 +66,9 @@ public class EndGameActivity extends AppCompatActivity {
         txtTime = (TextView) findViewById((R.id.txtTime));
 
         if (result.equals("Lose")) {
-           img = (ImageView) findViewById(R.id.imageView);
+            img = (GifImageView) findViewById(R.id.ivlose);
+
+
             ex = ExplosionImageView.attach2Window(this);
             MediaPlayer mp = MediaPlayer.create(this, R.raw.laugh);
             mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -90,7 +95,6 @@ public class EndGameActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-
                 startActivity(startIntent);
                 finish();
             }

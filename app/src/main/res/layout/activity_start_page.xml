@@ -20,6 +20,15 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
+        <Button
+            android:text="High Scores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/hs"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
         <RelativeLayout
             android:layout_width="300dp"
             android:layout_height="100dp"
@@ -185,14 +194,16 @@
 
         </TableLayout>
 
-        <Button
-            android:text="High Scores"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:id="@+id/hs" />
-
     </RelativeLayout>
+
+    <pl.droidsonroids.gif.GifImageView
+        android:src="@drawable/opengif"
+        android:id="@+id/ivopen"
+        android:background="@drawable/welcome"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:adjustViewBounds="true" />
 </RelativeLayout>
