@@ -81,7 +81,13 @@
                 android:textSize="24sp"
                 android:maxLength="10"
                 android:textStyle="normal|bold"
-                android:visibility="invisible" />
+                android:visibility="invisible"
+                android:textColorLink="@android:color/holo_orange_light"
+                android:textCursorDrawable="@android:color/holo_orange_light"
+                android:textColorHint="@android:color/holo_orange_light"
+                android:textColorHighlight="@android:color/holo_orange_light"
+                android:scrollbarThumbHorizontal="@android:color/holo_orange_light"
+                android:scrollbarThumbVertical="@android:color/holo_orange_light" />
 
         </TableRow>
 

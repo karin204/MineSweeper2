@@ -192,7 +192,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                 tiles[i][j].setLayoutParams(lp);
                 tiles[i][j].setListener(this);
                 tiles[i][j].setText(" ");
-                tiles[i][j].setTextSize(9);
+                tiles[i][j].setTextSize(12);
                 tiles[i][j].setBackgroundResource(R.drawable.box);
 
                 grid.addView(tiles[i][j]);
@@ -301,7 +301,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             for (int j = 0; j < cols; j++)
                 tilesAnimation(tiles[i][j]);
 
-        Toast.makeText(this, "You Lost!!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "You Lose!!", Toast.LENGTH_SHORT).show();
         ArrayList<Integer> mines = new ArrayList<>();
         mines = gameLogic.getMinePos();
         this.mines = gameLogic.getMinesCount();
@@ -396,7 +396,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         {
             myButton.setBackgroundResource(R.drawable.box_clicked);
             myButton.setText(num + "");
-            myButton.setTextColor(Color.RED);
+            myButton.setTextColor(Color.BLACK);
         }
     }
 
@@ -435,12 +435,10 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         }
     }
 
-    public void winAnimation(final ImageView jumpImg)
+    public void winAnimation(final ImageView jumpImg, Dialog dialog)
     {
         long duration = 400;
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
+        int height = dialog.getWindow().getAttributes().height;
         final MediaPlayer jump = MediaPlayer.create(this, R.raw.jump);
         ObjectAnimator upAnim = ObjectAnimator.ofFloat(jumpImg, "y", 580, 220);
         upAnim.setDuration(duration);
@@ -481,7 +479,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
     {
         final Intent intent = new Intent(this,StartPageActivity.class);
         final Dialog dialog = new Dialog(GameActivity.this);
-        dialog.setTitle("New High Score!");
+      //  dialog.setTitle("New High Score!");
         dialog.setContentView(R.layout.popup);
 
 
@@ -490,7 +488,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         dialog.setCanceledOnTouchOutside(false);
 
         final ImageView jumpImg = (ImageView)dialog.findViewById(R.id.jump);
-        winAnimation(jumpImg);
+        winAnimation(jumpImg,dialog);
 
         final EditText editText = (EditText)dialog.findViewById(R.id.name);
         final TextView txtRes = (TextView)dialog.findViewById(R.id.level);
@@ -604,8 +602,26 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         alert.show();
     }
 
+    public void returnBoard(ArrayList<Point> updatedCell)
+    {
+        for(int i=0; i<updatedCell.size();i++)
+        {
+            int row = updatedCell.get(i).x;
+            int col = updatedCell.get(i).y;
+            tiles[row][col].setText("");
+            tiles[row][col].setEnabled(true);
+            tiles[row][col].setClickable(true);
+            tiles[row][col].setBackgroundResource(R.drawable.box);
+
+        }
+    }
+
+
+
+
     @Override
     public void onSensorEvent(float[] values) {
+       ArrayList<Point> updatedCells = new ArrayList<>();
         if(ifFirst) {
             Log.d(TAG, "OnSensorEventFirstTime: "+ Arrays.toString(values));
             firstCheck[0] = values[0];
@@ -615,7 +631,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         }
         else
         {
-            if((Math.abs(values[0] - firstCheck[0]) > 0.6 * Math.abs(values[0])) && (Math.abs(values[1] - firstCheck[1]) > 0.6*Math.abs(values[1])) && (Math.abs(values[2]-firstCheck[2]) > 0.6*Math.abs(values[2]))) {
+            if((Math.abs(values[0] - firstCheck[0]) > 0.5 * Math.abs(values[0])) && (Math.abs(values[1] - firstCheck[1]) > 0.5*Math.abs(values[1])) && (Math.abs(values[2]-firstCheck[2]) > 0.5*Math.abs(values[2]))) {
                 Log.d(TAG, "OnSensorEventFirst: " + Arrays.toString(firstCheck));
                 Log.d(TAG, "OnSensorEvent: " + Arrays.toString(values));
 
@@ -624,7 +640,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                     Log.d(TAG, "5 sec passed time;" + curTime);
                     lastUpdated = curTime;
                     if (gameLogic.getMinesCount()<rows*cols) {
-                        gameLogic.addMine();
+                        updatedCells = gameLogic.addMine();
+                        returnBoard(updatedCells);
                         txtNumMine.setText(String.valueOf(gameLogic.getMinesCount()));
                     }
                     else {

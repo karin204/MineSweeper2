@@ -11,6 +11,7 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.TextView;
@@ -43,6 +44,15 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
 
         start = (GifImageView)findViewById(R.id.ivopen);
         start.setVisibility(View.VISIBLE);
+
+        dbs = DbSingleton.getInstance(this);
+        btnEasy = (Button)findViewById(R.id.btnEasy);
+        btnMedium = (Button)findViewById(R.id.btnMedium);
+        btnHard = (Button)findViewById(R.id.btnHard);
+        btnHs = (Button)findViewById(R.id.hs);
+
+
+
         MediaPlayer mp = MediaPlayer.create(this, R.raw.hello);
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
@@ -58,21 +68,33 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
 
 
                 start.startAnimation(animation);
-                start.setVisibility(View.INVISIBLE);;
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        start.setVisibility(View.INVISIBLE);
+                        btnHs.setVisibility(View.VISIBLE);
+                        btnEasy.setVisibility(View.VISIBLE);
+                        btnMedium.setVisibility(View.VISIBLE);
+                        btnHard.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
             }
 
         });
 
         mp.start();
 
-        dbs = DbSingleton.getInstance(this);
-        btnEasy = (Button)findViewById(R.id.btnEasy);
-        btnMedium = (Button)findViewById(R.id.btnMedium);
-        btnHard = (Button)findViewById(R.id.btnHard);
-        btnHs = (Button)findViewById(R.id.hs);
-        resEasy = (TextView)findViewById(R.id.timeEasy);
-        resMedium = (TextView)findViewById(R.id.timeMed);
-        resHard = (TextView)findViewById(R.id.timeHard);
         btnEasy.setOnClickListener(this);
         btnMedium.setOnClickListener(this);
         btnHard.setOnClickListener(this);

@@ -1,5 +1,6 @@
 package com.example.karin.minesweeper.logic;
 
+import android.graphics.Point;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -52,8 +53,10 @@ public class GameLogic
 
     }
 
-    public void addMine()
+    public ArrayList<Point> addMine()
     {
+        ArrayList<Point> updatedCells = new ArrayList<>();
+        int temp = 0;
         Random rand = new Random();
         int x = rand.nextInt(rows);
         int y = rand.nextInt(cols);
@@ -63,15 +66,20 @@ public class GameLogic
             y = rand.nextInt(cols);
         }
         gameBoard[x][y] = -1;
+        updatedCells.add(new Point(x,y));
         minePos.add(x*this.rows+y);
         this.mines++;
 
         for(int i=0 ;i<rows; i++)
             for(int j=0;j<cols; j++)
-                if(gameBoard[i][j] != -1)
-                    gameBoard[i][j]= CalculateNeighbours(i,j);
-
-
+                if(gameBoard[i][j] != -1) {
+                    temp = CalculateNeighbours(i, j);
+                    if(gameBoard[i][j] != temp) {
+                        updatedCells.add(new Point(i,j));
+                        gameBoard[i][j] = temp;
+                    }
+                }
+        return updatedCells;
     }
 
 

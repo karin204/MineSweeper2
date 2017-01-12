@@ -4,38 +4,48 @@
     android:id="@+id/activity_start_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
     android:background="@drawable/startscreen"
-    tools:context="com.example.karin.minesweeper.UI.StartPageActivity">
+    tools:context="com.example.karin.minesweeper.UI.StartPageActivity"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentRight="true"
+    android:paddingEnd="0dp"
+    android:paddingStart="0dp">
 
     <RelativeLayout
         android:id="@+id/startPage"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:fitsSystemWindows="false"
+        android:background="@drawable/start"
+        android:padding="0dp"
+        android:paddingBottom="0dp"
+        android:paddingEnd="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingStart="0dp"
+        android:paddingTop="0dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
-        <Button
-            android:text="High Scores"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/hs"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
         <RelativeLayout
             android:layout_width="300dp"
             android:layout_height="100dp"
-            android:layout_marginBottom="140dp"
+            android:layout_marginBottom="123dp"
             android:id="@+id/buttonsLayout"
+            android:layout_marginRight="31dp"
+            android:layout_marginEnd="31dp"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true">
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true">
 
             <Button
             android:id="@+id/btnMedium"
@@ -48,7 +58,8 @@
                 android:layout_toRightOf="@+id/btnEasy"
                 android:layout_toEndOf="@+id/btnEasy"
                 android:textStyle="normal|bold"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:visibility="invisible" />
 
             <Button
             android:id="@+id/btnEasy"
@@ -61,7 +72,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:textStyle="normal|bold"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:visibility="invisible" />
 
             <Button
                 android:id="@+id/btnHard"
@@ -74,127 +86,21 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:textStyle="normal|bold"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:visibility="invisible" />
 
         </RelativeLayout>
 
-        <TableLayout
-            android:id="@+id/scores"
-            android:background="@drawable/scorejpg"
-            android:layout_width="wrap_content"
-            android:layout_height="120dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/row1" >
-
-                <TextView
-                    android:text="Level"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/level"
-                    tools:textAlignment="center"
-                    android:textColor="@android:color/black"
-                    android:textSize="18sp"
-                    tools:textStyle="bold" />
-
-                <TextView
-                    android:text="Name Best Time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/score"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/background_dark"
-                    android:textSize="18sp"
-                    tools:textStyle="bold" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/row2" >
-
-                <TextView
-                    android:text="Easy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/easy"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:text="00:00"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/timeEasy"
-                    android:textColor="@android:color/black"
-                    android:textAlignment="center"
-                    android:textSize="18sp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/row3" >
-
-                <TextView
-                    android:text="Medium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/medium"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:text="00:00"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/timeMed"
-                    android:textColor="@android:color/black"
-                    android:textAlignment="center"
-                    android:textSize="18sp" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/row4" >
-
-                <TextView
-                    android:text="Hard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Hard"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/black"
-                    tools:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textStyle="normal|bold" />
-
-                <TextView
-                    android:text="00:00"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/timeHard"
-                    android:textColor="@android:color/black"
-                    android:textSize="18sp"
-                    android:textAlignment="center" />
-            </TableRow>
-
-        </TableLayout>
-
     </RelativeLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hs"
+        android:background="@drawable/score"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible" />
 
     <pl.droidsonroids.gif.GifImageView
         android:src="@drawable/opengif"
@@ -203,7 +109,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:adjustViewBounds="true" />
+        android:adjustViewBounds="true"
+        android:cropToPadding="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>
