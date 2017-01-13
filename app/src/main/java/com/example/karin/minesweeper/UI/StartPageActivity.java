@@ -84,7 +84,8 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
                     }
 
                     @Override
-                    public void onAnimationRepeat(Animation animation) {
+                    public void onAnimationRepeat(Animation animation)
+                    {
 
                     }
                 });
