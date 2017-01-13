@@ -46,13 +46,10 @@ import com.example.karin.minesweeper.logic.DbSingleton;
 import com.example.karin.minesweeper.logic.GameLogic;
 import com.example.karin.minesweeper.logic.PlayerScore;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Random;
-
-import pl.droidsonroids.gif.GifImageView;
 
 public class GameActivity extends AppCompatActivity implements MyButtonListener, LocationListener,OrientationService.MyServiceListener {
 
@@ -636,7 +633,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                 Log.d(TAG, "OnSensorEvent: " + Arrays.toString(values));
 
                 long curTime = System.currentTimeMillis();
-                if(curTime - lastUpdated > 5000) {
+                if(curTime - lastUpdated > 2000) {
                     Log.d(TAG, "5 sec passed time;" + curTime);
                     lastUpdated = curTime;
                     if (gameLogic.getMinesCount()<rows*cols) {
