@@ -24,6 +24,9 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.IInterface;
+import android.os.Parcel;
+import android.os.RemoteException;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +48,7 @@ import com.example.karin.minesweeper.logic.DbSingleton;
 import com.example.karin.minesweeper.logic.GameLogic;
 import com.example.karin.minesweeper.logic.PlayerScore;
 
+import java.io.FileDescriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -236,6 +240,9 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             gpsPosHandler.postDelayed(selfPositionThred, 0);
             timerHandler.postDelayed(timerRunnable, 0);
         }
+        //continue listening to sensors motion
+        if(myService != null)
+        setService(myService);
     }
 
     @Override
@@ -452,7 +459,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                if(countAnimation<3)
+                if(countAnimation<5)
                 {
                     countAnimation++;
                     animationSet1.start();
@@ -527,14 +534,6 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         });
 
         disableButtons(grid);
-        Handler handler = new Handler();
-        //delay necessary?
-        handler.postDelayed(new Runnable(){
-            @Override
-            public void run(){
-                dialog.show();
-            }
-        }, 0);
     }
 
     @Override
@@ -607,6 +606,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             tiles[row][col].setClickable(true);
             tiles[row][col].setBackgroundResource(R.drawable.box);
         }
+
     }
 
     @Override
@@ -627,11 +627,13 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
 
                 long curTime = System.currentTimeMillis();
                 if(curTime - lastUpdated > 2000) {
-                    Log.d(TAG, "5 sec passed time;" + curTime);
+                    Log.d(TAG, "2 sec passed time;" + curTime);
                     lastUpdated = curTime;
                     if (gameLogic.getMinesCount()<rows*cols) {
                         updatedCells = gameLogic.addMine();
                         returnBoard(updatedCells);
+                        for(int i = 0; i<updatedCells.size(); i++)
+                           disNoMine(updatedCells.get(i).x,updatedCells.get(i).y);
                         txtNumMine.setText(String.valueOf(gameLogic.getMinesCount()));
                     }
                     else
@@ -644,6 +646,78 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             }
         }
     }
+
+
+    public void disNoMine(int x,int y) {
+            if ((x - 1) >= 0 && !tiles[x-1][y].isEnabled()) {
+                tiles[x - 1][y].setEnabled(true);
+                tiles[x - 1][y].setClickable(true);
+                tiles[x - 1][y].setText("");
+                tiles[x - 1][y].setBackgroundResource(R.drawable.box);
+                gameLogic.addCounter();
+                disNoMine(x - 1, y);
+            }
+            if ((x + 1) <= rows - 1 && !tiles[x+1][y].isEnabled()) {
+                tiles[x + 1][y].setEnabled(true);
+                tiles[x + 1][y].setClickable(true);
+                tiles[x + 1][y].setBackgroundResource(R.drawable.box);
+                tiles[x + 1][y].setText("");
+                gameLogic.addCounter();
+                disNoMine(x + 1, y);
+            }
+            if ((y - 1) >= 0 && !tiles[x][y-1].isEnabled()) {
+                tiles[x][y - 1].setEnabled(true);
+                tiles[x][y - 1].setClickable(true);
+                tiles[x][y - 1].setBackgroundResource(R.drawable.box);
+                tiles[x][y-1].setText("");
+                gameLogic.addCounter();
+                disNoMine(x, y - 1);
+            }
+            if ((y + 1) <= cols - 1 && !tiles[x][y+1].isEnabled()) {
+                tiles[x][y + 1].setEnabled(true);
+                tiles[x][y + 1].setClickable(true);
+                tiles[x][y + 1].setBackgroundResource(R.drawable.box);
+                tiles[x][y+1].setText("");
+                gameLogic.addCounter();
+                disNoMine(x, y + 1);
+            }
+            if ((y + 1) <= cols - 1 && (x + 1) <= rows - 1 && !tiles[x+1][y+1].isEnabled()) {
+                tiles[x + 1][y + 1].setEnabled(true);
+                tiles[x + 1][y + 1].setClickable(true);
+                tiles[x + 1][y + 1].setBackgroundResource(R.drawable.box);
+                tiles[x + 1][y+1].setText("");
+                gameLogic.addCounter();
+                disNoMine(x + 1, y + 1);
+            }
+            if ((y + 1) <= cols - 1 && (x - 1) >= 0 && !tiles[x-1][y+1].isEnabled()) {
+                tiles[x - 1][y + 1].setEnabled(true);
+                tiles[x - 1][y + 1].setClickable(true);
+                tiles[x - 1][y + 1].setBackgroundResource(R.drawable.box);
+                tiles[x - 1][y+1].setText("");
+                gameLogic.addCounter();
+                disNoMine(x - 1, y + 1);
+            }
+            if ((y - 1) >= 0 && (x - 1) >= 0 && !tiles[x-1][y-1].isEnabled()) {
+                tiles[x - 1][y - 1].setEnabled(true);
+                tiles[x - 1][y - 1].setClickable(true);
+                tiles[x - 1][y - 1].setBackgroundResource(R.drawable.box);
+                tiles[x - 1][y-1].setText("");
+                gameLogic.addCounter();
+                disNoMine(x - 1, y - 1);
+            }
+            if ((y - 1) >= 0 && (x + 1) <= rows - 1 && !tiles[x+1][y-1].isEnabled()) {
+                tiles[x + 1][y - 1].setEnabled(true);
+                tiles[x + 1][y - 1].setClickable(true);
+                tiles[x + 1][y - 1].setBackgroundResource(R.drawable.box);
+                tiles[x + 1][y-1].setText("");
+                gameLogic.addCounter();
+                disNoMine(x + 1, y - 1);
+        }
+    }
+
+
+
+
 
     public void setService(OrientationService service)
     {

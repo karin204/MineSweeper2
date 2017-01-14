@@ -79,6 +79,9 @@ public class GameLogic
                         gameBoard[i][j] = temp;
                     }
                 }
+
+
+        counter+= updatedCells.size();
         return updatedCells;
     }
 
@@ -90,6 +93,14 @@ public class GameLogic
         else
             return false;
     }
+
+    public int getContent(int x,int y)
+    {
+        return gameBoard[x][y];
+    }
+
+    public void addCounter()
+    {this.counter++;}
 
     public int updateCell(int x, int y)
     {
