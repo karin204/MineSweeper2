@@ -1,6 +1,9 @@
 package com.example.karin.minesweeper.UI;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +27,9 @@ import java.util.Collections;
 public class HighScoresFragment extends Fragment implements View.OnClickListener {
     private TableLayout table;
     private Button [] button = new Button[3];
-    private Button map;
+    private Button mapButton;
     private DbSingleton dbs;
+    private String level = "Easy";
     ArrayList<PlayerScore> arr;
 
     @Override
@@ -41,13 +45,8 @@ public class HighScoresFragment extends Fragment implements View.OnClickListener
         button[2] = (Button) v.findViewById(R.id.Hard);
         button[2].setOnClickListener(this);
 
-        map = (Button) v.findViewById(R.id.map);
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        mapButton = (Button) v.findViewById(R.id.mapButton);
+        mapButton.setOnClickListener(this);
 
         buildTable("Easy", 0);
 
@@ -60,17 +59,33 @@ public class HighScoresFragment extends Fragment implements View.OnClickListener
 
         switch(id) {
             case R.id.Easy: {
+                level = "Easy";
                 buildTable("Easy", 0);
                 break;
             }
 
             case R.id.Medium: {
+                level = "Medium";
                 buildTable("Medium", 1);
                 break;
             }
 
             case R.id.Hard: {
+                level = "Hard";
                 buildTable("Hard", 2);
+                break;
+            }
+
+            case R.id.mapButton: {
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                MapScoresFragment f = new MapScoresFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("Level", level);
+                f.setArguments(bundle);
+                fragmentTransaction.replace(getArguments().getInt("ActivityId"), f);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
                 break;
             }
         }
@@ -88,6 +103,11 @@ public class HighScoresFragment extends Fragment implements View.OnClickListener
 
         arr = dbs.getPlayerScoresByLevel(level);
         Collections.sort(arr);
+        int count = arr.size();
+        Point size = new Point();
+        getActivity().getWindowManager().getDefaultDisplay().getSize(size);
+        int width = size.x;
+        int height = size.y;
 
         table.removeAllViews();
         for (PlayerScore p : arr)
@@ -96,13 +116,13 @@ public class HighScoresFragment extends Fragment implements View.OnClickListener
             TextView tv1 = new TextView(getActivity());
             tv1.setText(p.getPlayerName());
             tv1.setTextSize(20);
-            tv1.setPadding(50, 50, 50, 50);
+            tv1.setPadding(50/count, 50/count, 50/count, 50/count);
             tr.addView(tv1);
 
             TextView tv2 = new TextView(getActivity());
             tv2.setText(p.getPlayerTime());
             tv2.setTextSize(20);
-            tv2.setPadding(50, 50, 50, 50);
+            tv2.setPadding(50/count, 50/count, 50/count, 50/count);
             tr.addView(tv2);
 
             table.addView(tr);

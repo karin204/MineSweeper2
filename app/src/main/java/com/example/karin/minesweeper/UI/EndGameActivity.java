@@ -1,38 +1,19 @@
 package com.example.karin.minesweeper.UI;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-
 import com.example.karin.minesweeper.R;
-
 
 import pl.droidsonroids.gif.GifImageView;
 
@@ -87,7 +68,7 @@ public class EndGameActivity extends AppCompatActivity {
 
             txtRes.setText("");
         } else {
-            endLayout.setBackgroundResource(R.drawable.winer);
+            //endLayout.setBackgroundResource(R.drawable.winer);
             txtTime.setText(time);
         }
 

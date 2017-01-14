@@ -8,7 +8,7 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    android:background="@drawable/startscreen"
+    android:background="@drawable/start"
     tools:context="com.example.karin.minesweeper.UI.StartPageActivity"
     android:layout_alignParentStart="true"
     android:layout_alignParentTop="true"
@@ -19,50 +19,33 @@
     android:paddingEnd="0dp"
     android:paddingStart="0dp">
 
-    <RelativeLayout
-        android:id="@+id/startPage"
+    <pl.droidsonroids.gif.GifImageView
+        android:src="@drawable/opengif"
+        android:id="@+id/ivopen"
+        android:background="@drawable/welcome"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="false"
-        android:background="@drawable/start"
-        android:padding="0dp"
-        android:paddingBottom="0dp"
-        android:paddingEnd="0dp"
-        android:paddingLeft="0dp"
-        android:paddingRight="0dp"
-        android:paddingStart="0dp"
-        android:paddingTop="0dp"
+        android:visibility="invisible"
+        android:adjustViewBounds="true"
+        android:cropToPadding="false"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true" />
 
-        <RelativeLayout
-            android:layout_width="300dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="123dp"
-            android:id="@+id/buttonsLayout"
-            android:layout_marginRight="31dp"
-            android:layout_marginEnd="31dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true">
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/startPage"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="23dp">
 
-            <Button
-            android:id="@+id/btnMedium"
-                android:background="@drawable/medium"
-                android:gravity="bottom|center_horizontal"
-                android:textColor="@android:color/black"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/btnEasy"
-                android:layout_toEndOf="@+id/btnEasy"
-                android:textStyle="normal|bold"
-                android:textSize="12sp"
-                android:visibility="invisible" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
 
             <Button
-            android:id="@+id/btnEasy"
+                android:id="@+id/btnEasy"
                 android:background="@drawable/easy"
                 android:gravity="bottom|center_horizontal"
                 android:textColor="@android:color/black"
@@ -73,7 +56,21 @@
                 android:layout_alignParentStart="true"
                 android:textStyle="normal|bold"
                 android:textSize="12sp"
-                android:visibility="invisible" />
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/btnMedium"
+                android:background="@drawable/medium"
+                android:gravity="bottom|center_horizontal"
+                android:textColor="@android:color/black"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/btnEasy"
+                android:layout_toEndOf="@+id/btnEasy"
+                android:textStyle="normal|bold"
+                android:textSize="12sp"
+                android:visibility="visible" />
 
             <Button
                 android:id="@+id/btnHard"
@@ -87,31 +84,22 @@
                 android:layout_alignParentEnd="true"
                 android:textStyle="normal|bold"
                 android:textSize="12sp"
-                android:visibility="invisible" />
+                android:visibility="visible" />
+        </TableRow>
 
-        </RelativeLayout>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal">
 
-    </RelativeLayout>
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/hs"
+                android:background="@drawable/score"
+                android:visibility="visible" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/hs"
-        android:background="@drawable/score"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:visibility="invisible" />
-
-    <pl.droidsonroids.gif.GifImageView
-        android:src="@drawable/opengif"
-        android:id="@+id/ivopen"
-        android:background="@drawable/welcome"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:adjustViewBounds="true"
-        android:cropToPadding="false"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        </TableRow>
+    </TableLayout>
 
 </RelativeLayout>

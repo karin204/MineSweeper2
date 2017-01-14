@@ -7,12 +7,13 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Dialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -28,7 +29,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -38,7 +38,6 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.karin.minesweeper.R;
 import com.example.karin.minesweeper.Service.OrientationService;
@@ -94,7 +93,6 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         }
     };
 
-
     //Timer
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -123,11 +121,10 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             }
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if(location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
-                Toast.makeText(GameActivity.this, "Your cordinates are:" + location.getAltitude() + location.getLongitude() + "", Toast.LENGTH_SHORT).show();
+                Log.d(TAG,"Location obtained");
             }
             else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, GameActivity.this);
-                //Toast.makeText(GameActivity.this, "Your cordinates are:" + location.getAltitude() + location.getLongitude() + "", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -157,7 +154,18 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         highScoresButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                highScoresButton.setVisibility(View.INVISIBLE);
+                helpButton.setVisibility(View.INVISIBLE);
 
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                HighScoresFragment f = new HighScoresFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("ActivityId", R.id.activity_game);
+                f.setArguments(bundle);
+                fragmentTransaction.replace(R.id.activity_game, f);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
 
@@ -196,14 +204,12 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             }
         }
 
-
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         startTime = 0;
 
         boolean bindingSucceeded = bindService(new Intent(this, OrientationService.class), serviceConnection, Context.BIND_AUTO_CREATE);
         Log.d(TAG, "onCreate: " + (bindingSucceeded ? "the binding succeeded..." : "the binding failed!"));
     }
-
 
     @Override
     protected void onDestroy() {
@@ -251,7 +257,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         {
             timerHandler.removeCallbacks(timerRunnable);
             endGame = true;
-           // Toast.makeText(this, "Well Done!!", Toast.LENGTH_SHORT).show();
+
             final CharSequence score = timerTextView.getText();
             checkHigherScore(score);
         }
@@ -298,7 +304,6 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             for (int j = 0; j < cols; j++)
                 tilesAnimation(tiles[i][j]);
 
-        Toast.makeText(this, "You Lose!!", Toast.LENGTH_SHORT).show();
         ArrayList<Integer> mines = new ArrayList<>();
         mines = gameLogic.getMinePos();
         this.mines = gameLogic.getMinesCount();
@@ -306,10 +311,6 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             grid.getChildAt(mines.get(i)).setBackgroundResource(R.drawable.mine);
         myButton.setBackgroundResource(R.drawable.mine_clicked);
         disableButtons(grid);
-
-        SharedPreferences.Editor scoresEditor = getSharedPreferences("scores", MODE_PRIVATE).edit();
-        scoresEditor.putString(LP, level);
-        scoresEditor.apply();
 
         final Intent intent = new Intent(this, EndGameActivity.class);
         intent.putExtra(DETAILS,"Lose");
@@ -350,7 +351,6 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             public void onAnimationUpdate(ValueAnimator animation) {
                 currentTile.setTranslationX((random.nextFloat() - 0.5f) * currentTile.getWidth() * 0.05f);
                 currentTile.setTranslationY((random.nextFloat() - 0.5f) * currentTile.getHeight() * 0.05f);
-
             }
         });
 
@@ -452,7 +452,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                if(countAnimation<10)
+                if(countAnimation<3)
                 {
                     countAnimation++;
                     animationSet1.start();
@@ -469,16 +469,12 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         jump.start();
     }
 
-
-
-
     public void newHighScore(final CharSequence score)
     {
         final Intent intent = new Intent(this,StartPageActivity.class);
         final Dialog dialog = new Dialog(GameActivity.this);
       //  dialog.setTitle("New High Score!");
         dialog.setContentView(R.layout.popup);
-
 
         //cancel back operation and outside click
         dialog.setCancelable(false);
@@ -504,7 +500,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                 submit.setVisibility(View.VISIBLE);
 
             }
-        }, 9000);
+        }, 5000);
 
 
         s.setText(score.toString());
@@ -516,7 +512,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                 if(name.isEmpty())
                     name = "Anonymous";
                 if(location != null)
-                    p = new PlayerScore(name, (String) score, level, location.getAltitude(), location.getLongitude());
+                    p = new PlayerScore(name, (String) score, level, location.getLatitude(), location.getLongitude());
                 else
                     p = new PlayerScore(name, (String) score, level, 0.0, 0.0);
 
@@ -541,18 +537,19 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         }, 0);
     }
 
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK))
-            onBackPressed();
-        return true;
-    }
-
     @Override
-    public void onBackPressed() {
-        if (!endGame)
-        {
-            Intent intent = new Intent(GameActivity.this, StartPageActivity.class);
-            startActivity(intent);
+    public void onBackPressed()
+    {
+        int count = getFragmentManager().getBackStackEntryCount();
+        if (count != 0) {
+            getFragmentManager().popBackStack();
+            if(count == 1) {
+                highScoresButton.setVisibility(View.VISIBLE);
+                helpButton.setVisibility(View.VISIBLE);
+            }
+        }
+        else if (!endGame){
+            super.onBackPressed();
             finish();
         }
     }
@@ -609,12 +606,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             tiles[row][col].setEnabled(true);
             tiles[row][col].setClickable(true);
             tiles[row][col].setBackgroundResource(R.drawable.box);
-
         }
     }
-
-
-
 
     @Override
     public void onSensorEvent(float[] values) {
@@ -641,18 +634,16 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                         returnBoard(updatedCells);
                         txtNumMine.setText(String.valueOf(gameLogic.getMinesCount()));
                     }
-                    else {
+                    else
+                    {
                         txtNumMine.setText("Maximum mines in board, you lose!");
                         MyButton lastMine = new MyButton(this,rows-1,cols-1);
                         loose(lastMine);
                     }
                 }
             }
-
         }
-
     }
-
 
     public void setService(OrientationService service)
     {

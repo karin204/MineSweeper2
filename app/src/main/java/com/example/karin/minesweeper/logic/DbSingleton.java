@@ -18,6 +18,7 @@ public class DbSingleton
     private static ArrayList<PlayerScore> medium;
     private static ArrayList<PlayerScore> hard;
     private  static boolean isChanged = false;
+    private static boolean firstRun = true;
 
     private DbSingleton()
     {
@@ -50,5 +51,13 @@ public class DbSingleton
 
     public static void setIsChanged(boolean isChanged) {
         DbSingleton.isChanged = isChanged;
+    }
+
+    public static boolean isFirstRun() {
+        return firstRun;
+    }
+
+    public static void setFirstRun(boolean firstRun) {
+        DbSingleton.firstRun = firstRun;
     }
 }
