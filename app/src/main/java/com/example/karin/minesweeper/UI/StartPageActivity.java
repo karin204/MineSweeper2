@@ -187,6 +187,7 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
         if(dbs.isChanged()) {
             dbs.updateDB();
             Log.d(TAG, "DB saved!!!!!!!!!!!!!!!!!!!!!!");
+            dbs.setIsChanged(false);
             System.exit(0);
         }
     }

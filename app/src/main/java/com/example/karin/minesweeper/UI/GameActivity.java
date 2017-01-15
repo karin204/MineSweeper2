@@ -215,6 +215,12 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
     protected void onDestroy() {
         super.onDestroy();
         unbindService(serviceConnection);
+
+        if(dbs.isChanged()) {
+            dbs.updateDB();
+            Log.d(TAG, "DB saved!!!!!!!!!!!!!!!!!!!!!!");
+            dbs.setIsChanged(false);
+            }
     }
 
     @Override
@@ -666,7 +672,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                     if (gameLogic.getMinesCount()<rows*cols) {
                         updatedCells = gameLogic.addMine();
                         returnBoard(updatedCells);
-                        for(int i = 1; i<updatedCells.size() || i < 3; i++)
+                        for(int i = 1; i<updatedCells.size() && i < 3; i++)
                            disNoMine(updatedCells.get(i).x,updatedCells.get(i).y);
                         txtNumMine.setText(String.valueOf(gameLogic.getMinesCount()));
                     }
