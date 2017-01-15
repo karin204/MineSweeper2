@@ -114,11 +114,6 @@ public class MapScoresFragment extends Fragment implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap map)
     {
-        /*// For zooming automatically to the location of the marker
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        */
-
         Geocoder geocoder;
         List<Address> addresses = null;
         geocoder = new Geocoder(activity, Locale.getDefault());
@@ -159,35 +154,9 @@ public class MapScoresFragment extends Fragment implements OnMapReadyCallback
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
         }
         map.setMyLocationEnabled(true);
-        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(midianLat/counter, midianLan/counter), 1000));
         CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(midianLat/counter, midianLan/counter)).zoom(15).build();
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.getUiSettings().setCompassEnabled(true);
-    }
-
-    public void buildMapMarks()
-    {
-        Geocoder geocoder;
-        ArrayList<PlayerScore> arr = dbs.getPlayerScoresByLevel(level);
-        List<Address> addresses = null;
-        geocoder = new Geocoder(activity, Locale.getDefault());
-
-        for (PlayerScore p: arr)
-        {
-            if(p.getPlayerAltitude() != 0 && p.getPlayerLongitude() != 0)
-            {
-                try {
-                    addresses = geocoder.getFromLocation(p.getPlayerAltitude(), p.getPlayerLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-            String city = addresses.get(0).getLocality();
-            String country = addresses.get(0).getCountryName();
-
-            String fullAddress = address + ", " + city + ", " + country;
-        }
     }
 }

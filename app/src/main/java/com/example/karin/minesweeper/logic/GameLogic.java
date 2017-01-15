@@ -18,6 +18,7 @@ public class GameLogic
     private int counter;
     private int[][] gameBoard;
     private ArrayList<Integer> minePos;
+    private final String TAG = GameLogic.class.getSimpleName();
 
     public GameLogic(int rows, int cols,int mines)
     {
@@ -79,12 +80,9 @@ public class GameLogic
                         gameBoard[i][j] = temp;
                     }
                 }
-
-
-        counter+= updatedCells.size();
+        //counter--;
         return updatedCells;
     }
-
 
     public boolean CheckMine(int x, int y)
     {
@@ -150,6 +148,7 @@ public class GameLogic
 
     public boolean checkWin()
     {
+        Log.d(TAG,"counter = "+ counter);
         if(counter ==0)
             return true;
 
