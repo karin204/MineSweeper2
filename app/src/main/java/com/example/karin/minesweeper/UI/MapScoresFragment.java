@@ -133,7 +133,7 @@ public class MapScoresFragment extends Fragment implements OnMapReadyCallback
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if(addresses.size() > 0) {
+                if(addresses != null && addresses.size() > 0) {
                     String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
                     String city = addresses.get(0).getLocality();
                     String country = addresses.get(0).getCountryName();

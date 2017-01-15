@@ -123,7 +123,7 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
                 intent.putExtra("MINES", 5);
                 intent.putExtra(DETAILS,"Easy");
                 startActivity(intent);
-                //finish();
+                finish();
                 break;
             }
 
@@ -135,7 +135,7 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
                 intent.putExtra("MINES", 10);
                 intent.putExtra(DETAILS,"Medium");
                 startActivity(intent);
-                //finish();
+                finish();
                 break;
             }
 
@@ -147,7 +147,7 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
                 intent.putExtra("MINES", 10);
                 intent.putExtra(DETAILS,"Hard");
                 startActivity(intent);
-                //finish();
+                finish();
                 break;
             }
 
@@ -171,8 +171,9 @@ public class StartPageActivity extends AppCompatActivity implements OnClickListe
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() != 0)
             getFragmentManager().popBackStack();
-        else
-             finish();
+        else {
+            finish();
+        }
     }
 
     @Override

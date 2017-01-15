@@ -30,6 +30,17 @@ public class EndGameActivity extends AppCompatActivity {
     TextView txtTime;
     RelativeLayout endLayout;
     Intent startIntent;
+    MediaPlayer mp;
+    MediaPlayer mp2;
+
+    Handler handler = new Handler();
+    Runnable startPageCountdown = new Runnable() {
+        @Override
+        public void run() {
+            startActivity(startIntent);
+            finish();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +62,13 @@ public class EndGameActivity extends AppCompatActivity {
 
 
             ex = ExplosionImageView.attach2Window(this);
-            MediaPlayer mp = MediaPlayer.create(this, R.raw.laugh);
+            mp = MediaPlayer.create(this, R.raw.laugh);
             mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
                 @Override
                 public void onCompletion(MediaPlayer mp) {
 
-                    MediaPlayer mp2 = MediaPlayer.create(EndGameActivity.this, R.raw.bomb);
+                    mp2 = MediaPlayer.create(EndGameActivity.this, R.raw.bomb);
                     mp2.start();
                     addListener(img);
                 }
@@ -72,14 +83,7 @@ public class EndGameActivity extends AppCompatActivity {
             txtTime.setText(time);
         }
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(startIntent);
-                finish();
-            }
-        }, 5000);
+        handler.postDelayed(startPageCountdown, 5000);
     }
 
     @Override
@@ -92,7 +96,12 @@ public class EndGameActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
+        super.onBackPressed();
+        //mp2.stop();
+        mp.stop();
+        handler.removeCallbacks(startPageCountdown);
+        startActivity(startIntent);
+        finish();
     }
 
     private void addListener(View root) {
@@ -104,16 +113,6 @@ public class EndGameActivity extends AppCompatActivity {
         } else {
 
                     ex.explode(root);
-
-
         }
-
     }
-
-
-
-
-
-
-
 }

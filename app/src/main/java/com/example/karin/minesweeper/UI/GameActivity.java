@@ -50,7 +50,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity implements MyButtonListener, LocationListener,OrientationService.MyServiceListener {
+public class GameActivity extends AppCompatActivity implements MyButtonListener, LocationListener, OrientationService.MyServiceListener {
 
     public final static String DETAILS = "LEVEL";
     public final static String LP = "LP";
@@ -77,19 +77,20 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
 
     int countAnimation = 0;
     boolean show = false;
+
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder serviceBinder) {
-            if(serviceBinder instanceof OrientationService.ServiceBinder) {
+            if (serviceBinder instanceof OrientationService.ServiceBinder) {
                 setService(((OrientationService.ServiceBinder) serviceBinder).getService());
             }
-            Log.d(TAG,"onServiceConnected: "+ name);
+            Log.d(TAG, "onServiceConnected: " + name);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             setService(null);
-            Log.d(TAG,"onServiceDisconnected: "+ name);
+            Log.d(TAG, "onServiceDisconnected: " + name);
         }
     };
 
@@ -120,10 +121,9 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                 return;
             }
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
-                Log.d(TAG,"Location obtained");
-            }
-            else {
+            if (location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
+                Log.d(TAG, "Location obtained");
+            } else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, GameActivity.this);
             }
         }
@@ -169,25 +169,23 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             }
         });
 
-        rows = getIntent().getIntExtra("ROWS",0);
-        cols = getIntent().getIntExtra("COLS",0);
-        mines = getIntent().getIntExtra("MINES",0);
+        rows = getIntent().getIntExtra("ROWS", 0);
+        cols = getIntent().getIntExtra("COLS", 0);
+        mines = getIntent().getIntExtra("MINES", 0);
         level = getIntent().getStringExtra(DETAILS);
 
-        grid = (GridLayout)findViewById(R.id.board);
+        grid = (GridLayout) findViewById(R.id.board);
         grid.setColumnCount(cols);
         grid.setRowCount(rows);
         grid.setId(0);
-        gameLogic = new GameLogic(rows,cols, mines);
-        txtNumMine = (TextView)findViewById(R.id.txtMines);
+        gameLogic = new GameLogic(rows, cols, mines);
+        txtNumMine = (TextView) findViewById(R.id.txtMines);
         int n = gameLogic.getMinesCount();
         txtNumMine.setText(String.valueOf(n));
         tiles = new MyButton[rows][cols];
 
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
 
                 tiles[i][j] = new MyButton(this, i, j);
                 tiles[i][j].setBackgroundColor(Color.TRANSPARENT);
@@ -216,11 +214,16 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         super.onDestroy();
         unbindService(serviceConnection);
 
-        if(dbs.isChanged()) {
+        if (dbs.isChanged()) {
             dbs.updateDB();
             Log.d(TAG, "DB saved!!!!!!!!!!!!!!!!!!!!!!");
             dbs.setIsChanged(false);
-            }
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+        }
+        locationManager.removeUpdates(this);
     }
 
     @Override
@@ -441,10 +444,10 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         int width = size.x;
         final int height = size.y;
 
-        ObjectAnimator upAnim = ObjectAnimator.ofFloat(jumpImg, "y", height-650, 300);
+        ObjectAnimator upAnim = ObjectAnimator.ofFloat(jumpImg, "y", height-600, 250);
         upAnim.setDuration(duration);
         upAnim.setInterpolator(new LinearInterpolator());
-        ObjectAnimator downAnim = ObjectAnimator.ofFloat(jumpImg, "y",300, height-650);
+        ObjectAnimator downAnim = ObjectAnimator.ofFloat(jumpImg, "y",250, height-600);
         downAnim.setDuration(duration);
         downAnim.setInterpolator(new LinearInterpolator());
 
@@ -556,6 +559,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         handler1.postDelayed(new Runnable(){
             @Override
             public void run(){
+                startActivity(intent);
                 finish();
 
             }
@@ -578,7 +582,9 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
             }
         }
         else if (!endGame){
+            final Intent intent = new Intent(this,StartPageActivity.class);
             super.onBackPressed();
+            startActivity(intent);
             finish();
         }
     }
@@ -667,6 +673,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
 
                 long curTime = System.currentTimeMillis();
                 if(curTime - lastUpdated > 2000) {
+                    final MediaPlayer addSound = MediaPlayer.create(this, R.raw.add);
+                    addSound.start();
                     Log.d(TAG, "2 sec passed time;" + curTime);
                     lastUpdated = curTime;
                     if (gameLogic.getMinesCount()<rows*cols) {
@@ -678,7 +686,9 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                     }
                     else
                     {
-                        txtNumMine.setText("Maximum mines in board, you lose!");
+                        TextView curMine = (TextView)findViewById(R.id.curMines);
+                        curMine.setText("Maximum mines in board, you lose!");
+                        txtNumMine.setVisibility(View.INVISIBLE);
                         MyButton lastMine = new MyButton(this,rows-1,cols-1);
                         loose(lastMine);
                     }
