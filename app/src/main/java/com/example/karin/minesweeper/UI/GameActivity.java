@@ -424,19 +424,21 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         }
     }
 
-    public void winAnimation(final ImageView jumpImg, Dialog dialog)
+    public void winAnimation(final ImageView jumpImg, final ImageView afterJump, Dialog dialog)
     {
         long duration = 400;
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
-        display.getSize(size);
         final MediaPlayer jump = MediaPlayer.create(this, R.raw.jump);
-       // int height = dialog.getWindow().getDecorView().getHeight();
 
-        ObjectAnimator upAnim = ObjectAnimator.ofFloat(jumpImg, "y", size.y-400, 200);
+        this.getWindowManager().getDefaultDisplay().getSize(size);
+        int width = size.x;
+        final int height = size.y;
+
+        ObjectAnimator upAnim = ObjectAnimator.ofFloat(jumpImg, "y", height-650, 300);
         upAnim.setDuration(duration);
         upAnim.setInterpolator(new LinearInterpolator());
-        ObjectAnimator downAnim = ObjectAnimator.ofFloat(jumpImg, "y",200, size.y-400);
+        ObjectAnimator downAnim = ObjectAnimator.ofFloat(jumpImg, "y",300, height-650);
         downAnim.setDuration(duration);
         downAnim.setInterpolator(new LinearInterpolator());
 
@@ -455,7 +457,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                     jump.start();
                 }
                 else {
-                    jumpImg.setY(560);
+                    jumpImg.setVisibility(View.INVISIBLE);
+                    afterJump.setVisibility(View.VISIBLE);
                     show = true;
                 }
             }
@@ -477,7 +480,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         dialog.show();
 
         final ImageView jumpImg = (ImageView)dialog.findViewById(R.id.jump);
-        winAnimation(jumpImg,dialog);
+        final ImageView afterJump = (ImageView)dialog.findViewById(R.id.imageView);
+        winAnimation(jumpImg, afterJump, dialog);
 
         final EditText editText = (EditText)dialog.findViewById(R.id.name);
         final TextView txtRes = (TextView)dialog.findViewById(R.id.level);
@@ -539,7 +543,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         dialog.show();
 
         final ImageView jumpImg = (ImageView)dialog.findViewById(R.id.jump);
-        winAnimation(jumpImg,dialog);
+        final ImageView afterJump = (ImageView)dialog.findViewById(R.id.imageView);
+        winAnimation(jumpImg, afterJump, dialog);
 
         Handler handler1 = new Handler();
         handler1.postDelayed(new Runnable(){
