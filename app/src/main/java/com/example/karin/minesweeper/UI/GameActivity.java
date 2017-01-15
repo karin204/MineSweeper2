@@ -417,18 +417,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                 }
                 else if (score.charAt(i) > lowScore.charAt(i))
                 {
-                    final Intent intent2 = new Intent(this,EndGameActivity.class);
-                    intent2.putExtra(DETAILS,"win");
-                    intent2.putExtra("TIMER",score);
-                    disableButtons(grid);
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable(){
-                        @Override
-                        public void run(){
-                            startActivity(intent2);
-                            finish();
-                        }
-                    }, 3000);
+                    winNoHighScore(score);
                     break;
                 }
             }
@@ -532,6 +521,34 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                 finish();
             }
         });
+
+        disableButtons(grid);
+
+
+    }
+
+    public void winNoHighScore(final CharSequence score)
+    {
+        final Intent intent = new Intent(this,StartPageActivity.class);
+        final Dialog dialog = new Dialog(GameActivity.this);
+        dialog.setContentView(R.layout.popup);
+
+        //cancel back operation and outside click
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
+        final ImageView jumpImg = (ImageView)dialog.findViewById(R.id.jump);
+        winAnimation(jumpImg,dialog);
+
+        Handler handler1 = new Handler();
+        handler1.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                finish();
+
+            }
+        }, 4000);
 
         disableButtons(grid);
 
