@@ -11,6 +11,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -46,6 +47,52 @@ public class MapScoresFragment extends Fragment implements OnMapReadyCallback
     private MapView mMapView;
     private String level;
     private ArrayList<PlayerScore> arr;
+    private Double counter = 0.0;
+    private Double midianLat = 0.0;
+    private Double midianLan = 0.0;
+    private GoogleMap map;
+
+    Handler markerHandler = new Handler();
+    Runnable markerRunable = new Runnable() {
+        @Override
+        public void run() {
+            Geocoder geocoder;
+            List<Address> addresses = null;
+            geocoder = new Geocoder(activity, Locale.getDefault());
+
+            for (final PlayerScore p: arr)
+            {
+                final Double longitude = p.getPlayerLongitude();
+                final Double altitude = p.getPlayerAltitude();
+                if(altitude != 0 && longitude != 0)
+                {
+                    try {
+                        addresses = geocoder.getFromLocation(altitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if(addresses != null && addresses.size() > 0) {
+                        final String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                        final String city = addresses.get(0).getLocality();
+                        String country = addresses.get(0).getCountryName();
+                        midianLan += longitude;
+                        midianLat += altitude;
+                        counter++;
+
+                        markerHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                map.addMarker(new MarkerOptions()
+                                        .title(p.getPlayerName() + ": " + p.getPlayerTime())
+                                        .snippet(address + ", " + city)
+                                        .position(new LatLng(altitude, longitude)));
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    };
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -112,50 +159,70 @@ public class MapScoresFragment extends Fragment implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapReady(GoogleMap map)
+    public void onMapReady(GoogleMap map1)
     {
-        Geocoder geocoder;
-        List<Address> addresses = null;
-        geocoder = new Geocoder(activity, Locale.getDefault());
+        map = map1;
 
-        Double midianLat = 0.0;
-        Double midianLan = 0.0;
-        int counter = 0;
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Geocoder geocoder;
+                List<Address> addresses = null;
+                geocoder = new Geocoder(activity, Locale.getDefault());
 
-        for (PlayerScore p: arr)
-        {
-            Double longitude = p.getPlayerLongitude();
-            Double altitude = p.getPlayerAltitude();
-            if(altitude != 0 && longitude != 0)
-            {
-                try {
-                    addresses = geocoder.getFromLocation(altitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if(addresses != null && addresses.size() > 0) {
-                    String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                    String city = addresses.get(0).getLocality();
-                    String country = addresses.get(0).getCountryName();
+                for (final PlayerScore p: arr)
+                {
+                    final Double longitude = p.getPlayerLongitude();
+                    final Double altitude = p.getPlayerAltitude();
                     midianLan += longitude;
                     midianLat += altitude;
-                    counter++;
 
-                    map.addMarker(new MarkerOptions()
-                            .title(p.getPlayerName() + ": " + p.getPlayerTime())
-                            .snippet(address + ", " + city)
-                            .position(new LatLng(altitude, longitude)));
+                    if(altitude != 0 && longitude != 0)
+                    {
+                        counter++;
+                        try {
+                            addresses = geocoder.getFromLocation(altitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if(addresses != null && addresses.size() > 0) {
+                            final String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                            final String city = addresses.get(0).getLocality();
+                            final String country = addresses.get(0).getCountryName();
+
+                            markerHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    map.addMarker(new MarkerOptions()
+                                            .title(p.getPlayerName() + ": " + p.getPlayerTime())
+                                            .snippet(address + ", " + city)
+                                            .position(new LatLng(altitude, longitude)));
+
+                                        CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(midianLat/counter, midianLan/counter)).zoom(12).build();
+                                        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                                }
+                            });
+                        }
+                    }
                 }
+                markerHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(midianLat/counter, midianLan/counter)).zoom(12).build();
+                        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    }
+                });
             }
-        }
+        });
+        t.start();
+        //markerHandler.postDelayed(markerRunable,0);
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
         }
         map.setMyLocationEnabled(true);
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(midianLat/counter, midianLan/counter)).zoom(15).build();
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         map.getUiSettings().setMyLocationButtonEnabled(true);
         map.getUiSettings().setCompassEnabled(true);
     }
