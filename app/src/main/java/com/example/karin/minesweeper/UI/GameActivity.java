@@ -32,6 +32,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -341,13 +342,13 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         int rndNum;
 
         rndNum = random.nextBoolean() ? 1 : -1;
-        ObjectAnimator flyOutX = ObjectAnimator.ofFloat(currentTile, "x", currentTile.getX(), rndNum * size.x);
-        flyOutX.setDuration(duration);
-        flyOutX.setInterpolator(new DecelerateInterpolator());
+        ObjectAnimator animX = ObjectAnimator.ofFloat(currentTile, "x", currentTile.getX(), rndNum * size.x);
+        animX.setDuration(duration);
+        animX.setInterpolator(new DecelerateInterpolator());
 
-        ObjectAnimator flyOutY = ObjectAnimator.ofFloat(currentTile, "y", currentTile.getY(), size.y);
-        flyOutY.setDuration(duration);
-        flyOutY.setInterpolator(new DecelerateInterpolator());
+        ObjectAnimator animY = ObjectAnimator.ofFloat(currentTile, "y", currentTile.getY(), size.y);
+        animY.setDuration(duration);
+        animY.setInterpolator(new DecelerateInterpolator());
 
         ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f).setDuration(150);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -366,7 +367,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
 
         AnimatorSet animationSet1 = new AnimatorSet();
         AnimatorSet animationSet2 = new AnimatorSet();
-        animationSet1.playTogether(flyOutY, flyOutX);
+        animationSet1.playTogether(animY, animX);
         animationSet2.playSequentially(animator, animationSet1);
         animationSet2.start();
 
@@ -442,12 +443,16 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
     public void winAnimation(final ImageView jumpImg, Dialog dialog)
     {
         long duration = 400;
-        int height = dialog.getWindow().getAttributes().height;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
         final MediaPlayer jump = MediaPlayer.create(this, R.raw.jump);
-        ObjectAnimator upAnim = ObjectAnimator.ofFloat(jumpImg, "y", 580, 220);
+       // int height = dialog.getWindow().getDecorView().getHeight();
+
+        ObjectAnimator upAnim = ObjectAnimator.ofFloat(jumpImg, "y", size.y-400, 200);
         upAnim.setDuration(duration);
         upAnim.setInterpolator(new LinearInterpolator());
-        ObjectAnimator downAnim = ObjectAnimator.ofFloat(jumpImg, "y",220, 580);
+        ObjectAnimator downAnim = ObjectAnimator.ofFloat(jumpImg, "y",200, size.y-400);
         downAnim.setDuration(duration);
         downAnim.setInterpolator(new LinearInterpolator());
 
@@ -466,7 +471,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                     jump.start();
                 }
                 else {
-                    jumpImg.setY(580);
+                    jumpImg.setY(560);
                     show = true;
                 }
             }
@@ -480,12 +485,12 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
     {
         final Intent intent = new Intent(this,StartPageActivity.class);
         final Dialog dialog = new Dialog(GameActivity.this);
-      //  dialog.setTitle("New High Score!");
         dialog.setContentView(R.layout.popup);
 
         //cancel back operation and outside click
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
 
         final ImageView jumpImg = (ImageView)dialog.findViewById(R.id.jump);
         winAnimation(jumpImg,dialog);
@@ -507,7 +512,7 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
                 submit.setVisibility(View.VISIBLE);
 
             }
-        }, 5000);
+        }, 4000);
 
 
         s.setText(score.toString());
@@ -534,6 +539,8 @@ public class GameActivity extends AppCompatActivity implements MyButtonListener,
         });
 
         disableButtons(grid);
+
+
     }
 
     @Override
